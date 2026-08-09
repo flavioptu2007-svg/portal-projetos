@@ -28,13 +28,6 @@
   var TIMEOUT = 60000; // chat pode demorar quando o Render "acorda"
 
   /* ---------- Util ---------- */
-  function qs(obj) {
-    return Object.keys(obj || {})
-      .filter(function (k) { return obj[k] !== undefined && obj[k] !== null; })
-      .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]); })
-      .join('&');
-  }
-
   function fetchJSON(path, opts) {
     var controller = ('AbortController' in window) ? new AbortController() : null;
     var timer = setTimeout(function () { if (controller) controller.abort(); }, TIMEOUT);
@@ -84,6 +77,7 @@
       if (opts.agent) body.agent = opts.agent;
       if (typeof opts.use_rag === 'boolean') body.use_rag = opts.use_rag;
       return fetchJSON('/api/chat', { body: body }).then(function (d) {
+        if (!d.response) throw new Error('A API retornou uma resposta vazia.');
         return {
           response: d.response || '',
           provider: d.provider || '?',
@@ -322,7 +316,10 @@
           })
           .catch(function (err) {
             t.remove();
-            addMsg('bot', '😕 Não consegui responder agora. ' + (err && err.message ? err.message : ''));
+            var msg = (err && err.name === 'AbortError')
+              ? 'A API demorou para responder — tente novamente.'
+              : (err && err.message ? err.message : '');
+            addMsg('bot', '😕 Não consegui responder agora. ' + msg);
             $off.style.display = 'flex';
             $st.textContent = 'offline';
           })
