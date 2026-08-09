@@ -1,0 +1,1 @@
+/home/flavio/OpenManus/i18n-loader.js
