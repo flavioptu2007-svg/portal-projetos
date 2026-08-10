@@ -24,6 +24,13 @@
   'use strict';
 
   /* ---------- Config ---------- */
+  // Detecção automática de LAN: se o portal foi aberto via IP 192.168.x.x
+  // (ex.: http://192.168.15.17:8765 — servidor local da escola), o widget usa
+  // a API local da MESMA máquina (porta 8099) em vez da nuvem.
+  // No Firebase (jogos-5f131.web.app) ou localhost continua usando a nuvem.
+  if (!window.IA_API_BASE && /^https?:\/\/192\.168\./i.test(location.origin)) {
+    window.IA_API_BASE = location.origin.replace(/:\d+$/, ':8099');
+  }
   var BASE = (window.IA_API_BASE || 'https://ia-lab-api.onrender.com').replace(/\/+$/, '');
   var TIMEOUT = 60000; // chat pode demorar quando o Render "acorda"
 
