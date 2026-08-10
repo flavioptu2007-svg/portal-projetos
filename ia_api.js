@@ -239,7 +239,8 @@
 
       /* ---- histórico persistente por sessão (localStorage) ---- */
       // Chave por página → cada jogo tem sua própria conversa.
-      var HISTORY_KEY = 'ia-lab-hist:' + (location.pathname || '/').replace(/[^a-z0-9]/gi, '_');
+      // encodeURIComponent evita colisões (ex: /jogo-x.html vs /jogo_x.html).
+      var HISTORY_KEY = 'ia-lab-hist:' + encodeURIComponent(location.pathname || '/');
       var MAX_HISTORY = 60; // últimas 60 mensagens (30 perguntas/respostas)
       var HISTORY_TTL = 7 * 24 * 3600 * 1000; // expira após 7 dias
 
@@ -249,7 +250,10 @@
           if (!raw) return [];
           var obj = JSON.parse(raw);
           if (obj && Array.isArray(obj.msgs) && obj.updatedAt) {
-            if (Date.now() - obj.updatedAt > HISTORY_TTL) return [];
+            if (Date.now() - obj.updatedAt > HISTORY_TTL) {
+              localStorage.removeItem(HISTORY_KEY); // limpa entrada vencida
+              return [];
+            }
             return obj.msgs.slice(-MAX_HISTORY);
           }
           return [];
@@ -365,7 +369,11 @@
             var msg = (err && err.name === 'AbortError')
               ? 'A API demorou para responder — tente novamente.'
               : (err && err.message ? err.message : '');
-            addMsg('bot', '😕 Não consegui responder agora. ' + msg);
+            var errText = '😕 Não consegui responder agora. ' + msg;
+            addMsg('bot', errText);
+            // persiste também a resposta de erro para não restaurar pergunta órfã
+            history.push({ role: 'assistant', content: errText, meta: '' });
+            saveHistory();
             $off.style.display = 'flex';
             $st.textContent = 'offline';
           })
@@ -385,11 +393,22 @@
         $in.style.height = Math.min($in.scrollHeight, 100) + 'px';
       });
 
+      function resetClear() {
+        if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+        clearArmed = false;
+        $clear.textContent = '↺';
+        $clear.style.background = '';
+      }
+
       fab.addEventListener('click', function () {
         var closed = panel.classList.toggle('closed');
         fab.innerHTML = closed ? '🤖' : '✕';
-        if (!closed) {
+        if (closed) {
+          resetClear();
+        } else {
           $in.focus();
+          // com histórico restaurado, mostra a conversa mais recente
+          $msgs.scrollTop = $msgs.scrollHeight;
           IAApi.ping().then(function (ok) {
             $st.textContent = ok ? 'online' : 'offline';
             $off.style.display = ok ? 'none' : 'flex';
@@ -399,6 +418,7 @@
       panel.querySelector('#ia-close').addEventListener('click', function () {
         panel.classList.add('closed');
         fab.innerHTML = '🤖';
+        resetClear();
       });
 
       /* ---- nova conversa (limpa a sessão) — 2 cliques para confirmar ---- */
@@ -410,16 +430,11 @@
           $clear.textContent = 'Limpar?';
           $clear.style.background = 'rgba(220,38,38,.85)';
           clearTimer = setTimeout(function () {
-            clearArmed = false;
-            $clear.textContent = '↺';
-            $clear.style.background = '';
+            resetClear();
           }, 3000);
           return;
         }
-        clearTimeout(clearTimer);
-        clearArmed = false;
-        $clear.textContent = '↺';
-        $clear.style.background = '';
+        resetClear();
         history = [];
         saveHistory();
         while ($msgs.firstChild) $msgs.removeChild($msgs.firstChild);
