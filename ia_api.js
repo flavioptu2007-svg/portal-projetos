@@ -216,6 +216,7 @@
         '<div class="head">' +
         '<span class="ico">🤖</span>' +
         '<div class="tt">' + escHTML(title) + '<span class="st" id="ia-st">conectando…</span></div>' +
+        '<button id="ia-clear" title="Nova conversa">↺</button>' +
         '<button id="ia-close" title="Fechar">✕</button>' +
         '</div>' +
         '<div class="msgs" id="ia-msgs">' +
@@ -235,7 +236,36 @@
       var $send = panel.querySelector('#ia-send');
       var $off = panel.querySelector('#ia-off');
       var $st = panel.querySelector('#ia-st');
-      var history = [];
+
+      /* ---- histórico persistente por sessão (localStorage) ---- */
+      // Chave por página → cada jogo tem sua própria conversa.
+      var HISTORY_KEY = 'ia-lab-hist:' + (location.pathname || '/').replace(/[^a-z0-9]/gi, '_');
+      var MAX_HISTORY = 60; // últimas 60 mensagens (30 perguntas/respostas)
+      var HISTORY_TTL = 7 * 24 * 3600 * 1000; // expira após 7 dias
+
+      function loadHistory() {
+        try {
+          var raw = localStorage.getItem(HISTORY_KEY);
+          if (!raw) return [];
+          var obj = JSON.parse(raw);
+          if (obj && Array.isArray(obj.msgs) && obj.updatedAt) {
+            if (Date.now() - obj.updatedAt > HISTORY_TTL) return [];
+            return obj.msgs.slice(-MAX_HISTORY);
+          }
+          return [];
+        } catch (e) { return []; }
+      }
+
+      function saveHistory() {
+        try {
+          localStorage.setItem(HISTORY_KEY, JSON.stringify({
+            updatedAt: Date.now(),
+            msgs: history.slice(-MAX_HISTORY),
+          }));
+        } catch (e) { /* quota/privacidade: ignora */ }
+      }
+
+      var history = loadHistory();
       var busy = false;
 
       /* ---- helpers de mensagem ---- */
@@ -284,6 +314,19 @@
         return d;
       }
 
+      /* ---- restaura a conversa salva desta sessão ---- */
+      history.forEach(function (m) {
+        // history grava 'assistant'; o DOM/CSS usa 'bot'
+        addMsg(m.role === 'assistant' ? 'bot' : 'user', m.content, m.meta);
+      });
+      if (history.length) {
+        var note = document.createElement('div');
+        note.className = 'sys';
+        note.textContent = '💬 Conversa retomada — ' + Math.ceil(history.length / 2) + ' pergunta' + (Math.ceil(history.length / 2) > 1 ? 's' : '') + ' desta sessão.';
+        $msgs.appendChild(note);
+        $msgs.scrollTop = $msgs.scrollHeight;
+      }
+
       /* ---- envio ---- */
       function buildPrompt(text) {
         // O backend /api/chat aceita só `prompt` — embute o contexto do jogo
@@ -302,6 +345,7 @@
         $in.value = '';
         $in.style.height = 'auto';
         history.push({ role: 'user', content: text });
+        saveHistory();
         addMsg('user', text);
         busy = true;
         $send.disabled = true;
@@ -309,9 +353,11 @@
 
         IAApi.chat(buildPrompt(text), { use_rag: false })
           .then(function (res) {
-            history.push({ role: 'assistant', content: res.response });
+            var meta = '⚡ ' + res.latency_ms + ' ms · ' + res.provider;
+            history.push({ role: 'assistant', content: res.response, meta: meta });
+            saveHistory();
             t.remove();
-            addMsg('bot', res.response, '⚡ ' + res.latency_ms + ' ms · ' + res.provider);
+            addMsg('bot', res.response, meta);
             $off.style.display = 'none';
           })
           .catch(function (err) {
@@ -353,6 +399,36 @@
       panel.querySelector('#ia-close').addEventListener('click', function () {
         panel.classList.add('closed');
         fab.innerHTML = '🤖';
+      });
+
+      /* ---- nova conversa (limpa a sessão) — 2 cliques para confirmar ---- */
+      var $clear = panel.querySelector('#ia-clear');
+      var clearArmed = false, clearTimer = null;
+      $clear.addEventListener('click', function () {
+        if (!clearArmed) {
+          clearArmed = true;
+          $clear.textContent = 'Limpar?';
+          $clear.style.background = 'rgba(220,38,38,.85)';
+          clearTimer = setTimeout(function () {
+            clearArmed = false;
+            $clear.textContent = '↺';
+            $clear.style.background = '';
+          }, 3000);
+          return;
+        }
+        clearTimeout(clearTimer);
+        clearArmed = false;
+        $clear.textContent = '↺';
+        $clear.style.background = '';
+        history = [];
+        saveHistory();
+        while ($msgs.firstChild) $msgs.removeChild($msgs.firstChild);
+        var hintEl = document.createElement('div');
+        hintEl.className = 'sys';
+        hintEl.textContent = hint;
+        $msgs.appendChild(hintEl);
+        addMsg('bot', '🧹 Conversa nova! Pergunte o que quiser sobre este jogo.');
+        $in.focus();
       });
 
       // Verifica status ao carregar (silencioso)
