@@ -1,15 +1,15 @@
 {
-  "name": "ProfHistória — Projetos Educacionais",
+  "name": "ProfHistória — acervo de História",
   "short_name": "ProfHistória",
-  "description": "Portal de projetos educacionais de História, servido na rede local.",
+  "description": "28 ferramentas de História para sala de aula: jogos, provas adaptadas, corretores de gabarito, diário de classe e gestão escolar.",
   "lang": "pt-BR",
   "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#1e1b4b",
-  "theme_color": "#312e81",
+  "background_color": "#eef1f6",
+  "theme_color": "#132239",
   "icons": [
     {
       "src": "icon-192.png",
@@ -33,6 +33,23 @@
       "src": "apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Acervo completo",
+      "short_name": "Acervo",
+      "url": "./index.html#acervo"
+    },
+    {
+      "name": "Jogos de História",
+      "short_name": "Jogos",
+      "url": "./historiagames.html"
+    },
+    {
+      "name": "Quiz Histórico",
+      "short_name": "Quiz",
+      "url": "./quiz_historico.html"
     }
   ]
 }

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎮 HistóriaGames — Hub Educacional</title>
 <meta name="description" content="Hub educacional interativo com jogos de História para sala de aula">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
@@ -16,13 +16,13 @@
   --bg:#06080f;--bg2:#0c1020;
   --surface:#0f1328;--surface2:#151a32;--surface3:#1a2040;
   --border:#1e2545;--border2:#283060;--border3:#3540a0;
-  --accent:#6366f1;--accent2:#818cf8;--accent3:#a5b4fc;
+  --accent:#6366f1;--accent2:#818cf8;--accent3:#a5b4fc;--accent-forte:#4f46e5;
   --green:#22c55e;--green2:#4ade80;
   --cyan:#06b6d4;--cyan2:#22d3ee;
   --amber:#f59e0b;--amber2:#fbbf24;
   --rose:#f43f5e;--rose2:#fb7185;
   --violet:#8b5cf6;--violet2:#a78bfa;
-  --text:#e8ecf4;--text2:#94a3c0;--text3:#5b6a8a;--text4:#3a4566;
+  --text:#e8ecf4;--text2:#94a3c0;--text3:#78849e;--text4:#3a4566;
   --radius:16px;--radius-sm:10px;--radius-xs:6px;
   --shadow:0 8px 32px rgba(0,0,0,.4);
   --shadow-lg:0 16px 64px rgba(0,0,0,.5);
@@ -154,10 +154,10 @@ body::after{
 .search-bar input::placeholder{color:var(--text3)}
 .search-bar .btn-search{
   padding:.55rem 1.2rem;border:none;border-radius:var(--radius-sm);
-  background:var(--accent);color:#fff;font-size:.8rem;font-weight:600;
+  background:var(--accent-forte);color:#fff;font-size:.8rem;font-weight:600;
   cursor:pointer;transition:var(--transition);white-space:nowrap;
 }
-.search-bar .btn-search:hover{background:var(--accent2);transform:translateY(-1px)}
+.search-bar .btn-search:hover{background:#4338ca;transform:translateY(-1px)}
 
 /* ── Filter Bar ── */
 .filters{
@@ -250,8 +250,8 @@ body::after{
   font-size:.72rem;font-weight:600;cursor:pointer;transition:var(--transition);
   display:flex;align-items:center;justify-content:center;gap:4px;
 }
-.card-btn-play{background:var(--accent);color:#fff}
-.card-btn-play:hover{background:var(--accent2);transform:translateY(-1px)}
+.card-btn-play{background:var(--accent-forte);color:#fff}
+.card-btn-play:hover{background:#4338ca;transform:translateY(-1px)}
 .card-btn-print{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
 .card-btn-print:hover{border-color:var(--amber);color:var(--amber)}
 
@@ -290,8 +290,8 @@ body::after{
   font-size:.8rem;font-weight:600;cursor:pointer;transition:var(--transition);
   border:1px solid var(--border);
 }
-.modal-btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.modal-btn-primary:hover{background:var(--accent2)}
+.modal-btn-primary{background:var(--accent-forte);color:#fff;border-color:var(--accent-forte)}
+.modal-btn-primary:hover{background:#4338ca}
 .modal-btn-secondary{background:var(--surface2);color:var(--text2)}
 .modal-btn-secondary:hover{border-color:var(--border2);color:var(--text)}
 
@@ -1323,7 +1323,7 @@ function toggleTheme() {
   document.documentElement.style.setProperty('--border2', darkMode ? '#283060' : '#cbd5e1');
   document.documentElement.style.setProperty('--text', darkMode ? '#e8ecf4' : '#1e293b');
   document.documentElement.style.setProperty('--text2', darkMode ? '#94a3c0' : '#64748b');
-  document.documentElement.style.setProperty('--text3', darkMode ? '#5b6a8a' : '#94a3b8');
+  document.documentElement.style.setProperty('--text3', darkMode ? '#78849e' : '#94a3b8');
   document.documentElement.style.setProperty('--text4', darkMode ? '#3a4566' : '#cbd5e1');
   document.getElementById('themeBtn').textContent = darkMode ? '🌙' : '☀️';
   showToast(darkMode ? '🌙 Modo escuro ativado' : '☀️ Modo claro ativado', 'info');

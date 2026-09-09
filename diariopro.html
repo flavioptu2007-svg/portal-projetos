@@ -30,7 +30,7 @@ input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid rgba(79,70,229,.5);outline-offset:2px;border-radius:6px}
 /* ---------- LAYOUT ---------- */
 header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(90deg,var(--indigo),var(--violet));color:#fff;box-shadow:0 2px 12px rgba(30,34,51,.18)}
-.logo{font-weight:800;font-size:1.15rem;letter-spacing:.3px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo{font-weight:800;font-size:1.15rem;letter-spacing:.3px;display:flex;align-items:center;gap:8px;white-space:nowrap;margin:0}
 .logo .emoji{font-size:1.3rem}
 .hdr-info{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:.8rem;opacity:.95;flex-wrap:wrap}
 .hdr-info b{font-weight:700}
@@ -175,7 +175,7 @@ main{padding:20px 22px 60px;max-width:1180px;width:100%}
 </head>
 <body>
 <header>
-  <div class="logo"><span class="emoji">📘</span> DiárioPro</div>
+  <h1 class="logo"><span class="emoji" aria-hidden="true">📘</span> DiárioPro</h1>
   <div class="hdr-info">
     <span><b id="hdr-professor">—</b> · <span id="hdr-escola">—</span></span>
     <span id="hdr-ano">—</span>
@@ -260,8 +260,19 @@ const CHAVE_IA_CONSENT = 'diariopro_ia_consent';
 
 let DB = null;
 function salvar(){ try{ localStorage.setItem(CHAVE_DB, JSON.stringify(DB)); }catch(e){ toast('Falha ao salvar localmente','erro'); } }
+/* LGPD: a anonimização de nomes de alunos é padrão LIGADO. Ela só fica desligada
+   se o professor desmarcou explicitamente a opção (valor booleano false persistido).
+   Configurações antigas/incompletas (chave ausente) migram para o default seguro. */
+function migrarConfigIA(){
+  if (!DB.config || typeof DB.config !== 'object') DB.config = {};
+  if (!DB.config.ia || typeof DB.config.ia !== 'object') DB.config.ia = {};
+  if (DB.config.ia.anonimizar === undefined) DB.config.ia.anonimizar = true;
+}
 function carregar(){
-  try{ const raw = localStorage.getItem(CHAVE_DB); if(raw){ DB = JSON.parse(raw); return; } }catch(e){}
+  try{
+    const raw = localStorage.getItem(CHAVE_DB);
+    if(raw){ DB = JSON.parse(raw); migrarConfigIA(); return; }
+  }catch(e){}
   DB = seedDemo(); salvar();
 }
 
@@ -767,8 +778,8 @@ function normalizarIntentoLLM(json, mapa){
 async function chamarOpenRouter(texto, intentoAtual){
   const chave = sessionStorage.getItem(CHAVE_IA_KEY);
   const cfg = DB.config.ia;
-  const prep = cfg.anonimizar ? anonimizarTexto(texto) : {texto, mapa:new Map()};
-  const ctx = 'Turmas: '+DB.turmas.map(t=>t.rotulo+'='+t.nome).join('; ')+'. Alunos disponíveis: '+(cfg.anonimizar? 'apenas identificadores ALUNOn (não envie nomes reais)': DB.alunos.map(a=>a.nome).join(', '));
+  const prep = (cfg.anonimizar !== false) ? anonimizarTexto(texto) : {texto, mapa:new Map()};
+  const ctx = 'Turmas: '+DB.turmas.map(t=>t.rotulo+'='+t.nome).join('; ')+'. Alunos disponíveis: '+((cfg.anonimizar !== false)? 'apenas identificadores ALUNOn (não envie nomes reais)': DB.alunos.map(a=>a.nome).join(', '));
   try{
     const ctrl = new AbortController();
     const to = setTimeout(()=>ctrl.abort(), 25000);
@@ -1110,7 +1121,7 @@ async function processarTexto(texto){
   }
   if (it.faltando.length){
     Asst.estado='AWAITING_DATA'; Asst.intento=it;
-    return '🤔 Preciso de mais informações para '+(LABELS_ACAO[it.tipo]||it.tipo).toLowerCase()+':<br>'+it.faltando.map((f,i)=>(i+1)+'. <b>'+f+'</b>').join('<br>');
+    return '🤔 Preciso de mais informações para '+esc((LABELS_ACAO[it.tipo]||it.tipo).toLowerCase())+':<br>'+it.faltando.map((f,i)=>(i+1)+'. <b>'+esc(f)+'</b>').join('<br>');
   }
   return prepararOperacao(it, r.origem);
 }
@@ -1823,7 +1834,7 @@ function renderConfiguracoes(){
       '<div class="campo"><label>Provedor</label><select id="cf-prov"><option value="local">Local (offline)</option><option value="openrouter" '+(cfg.ia.provider==='openrouter'?'selected':'')+'>OpenRouter</option></select></div>'+
       '<div class="campo"><label>Modelo</label><select id="cf-model">'+['openai/gpt-4o-mini','meta-llama/llama-3.3-70b-instruct','google/gemini-2.0-flash-001','deepseek/deepseek-chat','qwen/qwen2.5-72b-instruct'].map(m=>'<option '+(cfg.ia.model===m?'selected':'')+'>'+m+'</option>').join('')+'</select></div>'+
       '<div class="campo"><label for="cf-key">Chave da API (somente nesta aba — sessionStorage)</label><input id="cf-key" type="password" placeholder="sk-or-v1-..." value="" autocomplete="off"><div style="font-size:.7rem;color:var(--texto2)">A chave nunca é salva em disco nem registrada em logs/auditoria. Some ao fechar a aba.</div></div>'+
-      '<div class="campo"><label><input id="cf-anon" type="checkbox" '+(cfg.ia.anonimizar?'checked':'')+' style="width:auto"> Anonimizar nomes antes do envio (LGPD)</label><div style="font-size:.7rem;color:var(--texto2)">Nomes de estudantes são substituídos por ALUNO1, ALUNO2... antes de qualquer envio à API.</div></div>'+
+      '<div class="campo"><label><input id="cf-anon" type="checkbox" '+(cfg.ia.anonimizar !== false?'checked':'')+' style="width:auto"> Anonimizar nomes antes do envio (LGPD — ativado por padrão)</label><div style="font-size:.7rem;color:var(--texto2)">Nomes de estudantes são substituídos por ALUNO1, ALUNO2... antes de qualquer envio à API. Desmarque somente se tiver base legal para enviar nomes.</div></div>'+
       '</div>'+
       '<div class="aviso warn" id="cf-consent-box">🔒 <b>Consentimento LGPD:</b> o envio de dados a modelos externos exige base jurídica. Nenhum dado é enviado até você conceder o consentimento abaixo. (Anonimização ativada por padrão.)</div>'+
       '<div class="fila" style="justify-content:flex-end"><button class="btn btn-ghost" id="cf-salvar-ia">Salvar configuração</button><button class="btn btn-pri" id="cf-consent">'+(cfg.ia.consentido?'✅ Consentimento concedido':'🤝 Conceder consentimento')+'</button></div></div>'+
@@ -1846,7 +1857,7 @@ function renderConfiguracoes(){
   };
   $('cf-consent').onclick=()=>{
     abrirModal('<div class="modal"><h2>🤝 Consentimento para uso de IA externa <button class="fechar" id="m-fechar">✕</button></h2>'+
-      '<p style="font-size:.85rem">Ao conceder o consentimento, trechos da sua mensagem podem ser enviados ao modelo <b>'+esc(cfg.ia.model)+'</b> via OpenRouter, exclusivamente para interpretar a intenção.'+(cfg.ia.anonimizar?' <b>Nomes de estudantes serão anonimizados (ALUNO1, ALUNO2...).</b>':'')+'</p>'+
+      '<p style="font-size:.85rem">Ao conceder o consentimento, trechos da sua mensagem podem ser enviados ao modelo <b>'+esc(cfg.ia.model)+'</b> via OpenRouter, exclusivamente para interpretar a intenção.'+(cfg.ia.anonimizar !== false?' <b>Nomes de estudantes serão anonimizados (ALUNO1, ALUNO2...).</b>':' <b>Atenção: a anonimização está DESLIGADA — nomes reais serão enviados ao modelo.</b>')+'</p>'+
       '<p style="font-size:.8rem;color:var(--texto2)">Base legal: interesse legítimo do professor + consentimento (§20 da especificação). Você pode revogar a qualquer momento. Sem chave configurada ou sem consentimento, o interpretador local (offline) assume automaticamente.</p>'+
       '<div class="fila" style="justify-content:flex-end;margin-top:12px"><button class="btn btn-ghost" id="m-cancelar">Cancelar</button><button class="btn btn-pri" id="m-ok">Conceder consentimento</button></div></div>');
     $('m-fechar').onclick=fecharModal; $('m-cancelar').onclick=fecharModal;

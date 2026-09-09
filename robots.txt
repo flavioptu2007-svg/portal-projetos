@@ -1,0 +1,7 @@
+# ProfHistória — acervo de História para sala de aula
+# https://jogos-5f131.web.app/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://jogos-5f131.web.app/sitemap.xml

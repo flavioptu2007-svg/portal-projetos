@@ -22,7 +22,7 @@
     --violet: #a78bfa;
     --text: #e8eaf0;
     --text2: #8b91a8;
-    --text3: #555d78;
+    --text3: #7f859a;
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -77,7 +77,7 @@
     font-size: 18px; font-weight: 800; color: #000;
     font-family: 'Syne', sans-serif;
   }
-  .logo-text { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
+  .logo-text { margin: 0; font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
   .logo-text span { color: var(--violet); }
   .logo-sub { display: block; font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
 
@@ -335,7 +335,7 @@
   <div class="logo">
     <div class="logo-icon">P</div>
     <div>
-      <div class="logo-text">OMREdu <span>Pro</span></div>
+      <h1 class="logo-text">OMREdu <span>Pro</span></h1>
       <div class="logo-sub">Corretor de Gabaritos · Gemini Vision</div>
     </div>
   </div>
@@ -352,7 +352,7 @@
   <section class="panel" aria-labelledby="gabarito-heading">
     <div class="panel-header">
       <div class="panel-header-icon icon-violet">✅</div>
-      <div class="panel-title"><span class="step">01</span> Gabarito Oficial</div>
+      <div class="panel-title" id="gabarito-heading"><span class="step">01</span> Gabarito Oficial</div>
     </div>
     <div class="panel-body">
       <div class="form-row">
@@ -382,7 +382,7 @@
   <section class="panel" aria-labelledby="aluno-heading">
     <div class="panel-header">
       <div class="panel-header-icon">📷</div>
-      <div class="panel-title"><span class="step">02</span> Cartão Resposta do Aluno</div>
+      <div class="panel-title" id="aluno-heading"><span class="step">02</span> Cartão Resposta do Aluno</div>
     </div>
     <div class="panel-body">
       <div class="tab-bar" role="tablist" aria-label="Origem da imagem">
@@ -429,7 +429,7 @@
   <section class="panel" aria-labelledby="corrigir-heading">
     <div class="panel-header">
       <div class="panel-header-icon icon-violet">⚡</div>
-      <div class="panel-title"><span class="step">03</span> Corrigir</div>
+      <div class="panel-title" id="corrigir-heading"><span class="step">03</span> Corrigir</div>
     </div>
     <div class="corrigir-wrap">
       <button class="btn btn-primary" id="btnCorrigir" onclick="corrigirProva()" disabled aria-label="Corrigir Prova">🧠 Corrigir Prova com IA</button>
@@ -441,7 +441,7 @@
   <section class="panel" aria-labelledby="resultados-heading">
     <div class="panel-header">
       <div class="panel-header-icon">📊</div>
-      <div class="panel-title"><span class="step">04</span> Resultados</div>
+      <div class="panel-title" id="resultados-heading"><span class="step">04</span> Resultados</div>
     </div>
     <div class="panel-body" style="min-height:120px">
 
@@ -518,7 +518,7 @@
   <section class="panel" aria-labelledby="historico-heading">
     <div class="panel-header">
       <div class="panel-header-icon">🕐</div>
-      <div class="panel-title">Histórico</div>
+      <div class="panel-title" id="historico-heading">Histórico</div>
       <button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="limparHistorico()">Limpar</button>
     </div>
     <div class="panel-body">
@@ -533,7 +533,7 @@
   <div class="modal modal-wrap">
     <button class="modal-close" onclick="fecharModalChave()" aria-label="Fechar">✕</button>
     <h3 id="keyModalTitle">🔑 Chave da API Gemini</h3>
-    <p>Este app roda 100% no seu navegador e usa a <b>API Gemini</b> para ler as marcações do cartão. Cole sua chave abaixo — ela fica salva apenas no <b>localStorage do seu navegador</b>.</p>
+    <p>Este app roda 100% no seu navegador e usa a <b>API Gemini</b> para ler as marcações do cartão. Cole sua chave abaixo — ela fica salva apenas na <b>memória desta aba</b> (sessionStorage), some ao fechar e nunca é gravada em disco nem enviada a outro servidor além do Google.</p>
     <div class="field">
       <label for="geminiKey">Chave de API (Gemini API)</label>
       <input type="password" id="geminiKey" placeholder="AIza..." autocomplete="off">
@@ -767,7 +767,9 @@ function atualizarEstadoBotao() {
 /* ============================================================
    CHAVE DA API (Gemini)
    ============================================================ */
-function getApiKey() { return localStorage.getItem(LS_KEY) || ''; }
+/* A chave vive só na aba (sessionStorage): some ao fechar e não fica
+   exposta a um XSS de outra página do mesmo domínio depois do uso. */
+function getApiKey() { return sessionStorage.getItem(LS_KEY) || ''; }
 function getModel() { return localStorage.getItem(LS_MODEL) || 'gemini-2.0-flash'; }
 
 function abrirModalChave() {
@@ -788,13 +790,13 @@ function salvarChave() {
     toast('Informe a chave da API Gemini', 'erro');
     return;
   }
-  localStorage.setItem(LS_KEY, key);
+  sessionStorage.setItem(LS_KEY, key);
   localStorage.setItem(LS_MODEL, model);
   const btn = document.getElementById('btnApiKey');
   btn.classList.add('ok');
   btn.textContent = '🔑 Chave configurada';
   fecharModalChave();
-  toast('Chave salva no navegador!', 'ok');
+  toast('Chave salva apenas nesta aba!', 'ok');
 }
 
 document.getElementById('keyModal').addEventListener('click', (e) => {
@@ -875,9 +877,11 @@ Formato exato da resposta:
   const imgData = imageBase64.includes(',') ? imageBase64.split(',')[1] : imageBase64;
   const mime = (imageBase64.match(/^data:([^;]+);/) || [null, 'image/jpeg'])[1];
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+  /* A chave vai no cabeçalho (não na URL) para não vazar em logs,
+     histórico, proxies e cabeçalhos Referer. */
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify({
       contents: [{
         parts: [

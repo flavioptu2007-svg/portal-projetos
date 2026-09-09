@@ -10,8 +10,8 @@
 :root{
   --indigo:#4f46e5; --indigo-d:#4338ca; --indigo-l:#eef2ff;
   --violet:#7c3aed; --violet-l:#f5f3ff;
-  --bg:#f4f5fb; --card:#fff; --borda:#e2e5f1; --texto:#1e2233; --texto2:#5b6178;
-  --ok:#059669; --ok-l:#ecfdf5; --warn:#d97706; --warn-l:#fffbeb;
+  --bg:#f4f5fb; --card:#fff; --borda:#e2e5f1; --texto:#1e2233; --texto2:#5a6077;
+  --ok:#047857; --ok-l:#ecfdf5; --warn:#d97706; --warn-l:#fffbeb;
   --erro:#dc2626; --erro-l:#fef2f2;
   --raio:14px; --sombra:0 2px 10px rgba(30,34,51,.07);
 }
@@ -22,7 +22,7 @@ h1,h2,h3{margin:0 0 6px}
 button{font:inherit;cursor:pointer}
 :focus-visible{outline:3px solid rgba(79,70,229,.5);outline-offset:2px;border-radius:6px}
 header{display:flex;align-items:center;gap:12px;padding:10px 18px;background:linear-gradient(90deg,var(--indigo),var(--violet));color:#fff;box-shadow:0 2px 12px rgba(30,34,51,.18);flex-wrap:wrap}
-header .logo{font-weight:800;font-size:1.15rem}
+header .logo{font-weight:800;font-size:1.15rem;margin:0}
 .hdr-info{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:.8rem;flex-wrap:wrap}
 .stat{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.16);padding:4px 11px;border-radius:999px;font-weight:700}
 .layout{display:grid;grid-template-columns:minmax(340px,440px) 1fr;gap:18px;padding:16px 20px 50px;max-width:1120px;margin:0 auto}
@@ -145,7 +145,7 @@ header .logo{font-weight:800;font-size:1.15rem}
 </head>
 <body>
 <header>
-  <div class="logo">🎱 Bingo Histórico — Reforma Religiosa</div>
+  <h1 class="logo">🎱 Bingo Histórico — Reforma Religiosa</h1>
   <div class="hdr-info">
     <span class="stat">🏆 <span id="cont-pontos">0</span></span>
     <span class="stat">🔥 <span id="cont-streak">0</span></span>
@@ -172,7 +172,7 @@ header .logo{font-weight:800;font-size:1.15rem}
   <section class="card">
     <h2>❓ Sorteio</h2>
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
-      <label style="font-size:.75rem;font-weight:700;color:var(--texto2)">⏱️ Timer:</label>
+      <label for="timer-config" style="font-size:.75rem;font-weight:700;color:var(--texto2)">⏱️ Timer:</label>
       <select id="timer-config" style="padding:6px 8px;border:1px solid var(--borda);border-radius:8px;font-size:.8rem">
         <option value="0">Desligado</option>
         <option value="10">10s</option>
@@ -215,7 +215,7 @@ header .logo{font-weight:800;font-size:1.15rem}
   <section class="card">
     <h2>🖨️ Gerar Cartelas para a Turma</h2>
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0">
-      <label style="font-size:.85rem;font-weight:700">Quantidade de cartelas:</label>
+      <label for="num-cartelas" style="font-size:.85rem;font-weight:700">Quantidade de cartelas:</label>
       <input type="number" id="num-cartelas" value="10" min="1" max="40" style="width:80px;padding:8px;border:1px solid var(--borda);border-radius:9px">
       <button class="btn btn-pri" id="btn-gerar-cartelas" style="width:auto">🃏 Gerar Cartelas</button>
       <button class="btn btn-ok" id="btn-imprimir" style="width:auto">🖨️ Imprimir</button>
