@@ -3,3 +3,14 @@
 # OS
 .DS_Store
 Thumbs.db
+
+# Artefatos locais de execução (nunca devem ir para o repositório)
+.servidor.pid
+.servidor.log
+.firebase/
+*.bak
+
+# Dependências e ambientes
+node_modules/
+__pycache__/
+.venv/

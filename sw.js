@@ -6,14 +6,19 @@
    Estratégia:
    - Navegação (HTML, inclusive a raiz "/"): network-first — nunca
      serve HTML velho quando há rede; só usa o cache se offline.
+   - CSS e JS do próprio portal: stale-while-revalidate — abre rápido
+     offline e se atualiza na visita seguinte, quando há rede.
    - Ícones estáticos (png/ico): cache-first (nunca mudam).
    - Nada de respostas de erro é gravado no cache.
    ============================================================ */
 
-const CACHE = "profhistoria-v1";
+const CACHE = "profhistoria-v2";
 
 const SHELL = [
   "./index.html",
+  "./projetos.js",
+  "./assets/site.css",
+  "./assets/site.js",
   "./manifest.json",
   "./favicon.ico",
   "./favicon.png",
@@ -38,6 +43,9 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  // Só GET é cacheável; POST/PUT/HEAD seguem direto para a rede.
+  if (event.request.method !== "GET") return;
+
   const url = new URL(event.request.url);
 
   // Só intercepta requisições do próprio portal (mesmo origin).
@@ -48,6 +56,27 @@ self.addEventListener("fetch", (event) => {
   if (/\.(png|ico)$/.test(url.pathname)) {
     event.respondWith(
       caches.match(event.request).then((hit) => hit || fetch(event.request))
+    );
+    return;
+  }
+
+  // CSS e JS do próprio portal: stale-while-revalidate.
+  // Serve o que está no cache na hora e busca a versão nova em segundo
+  // plano; se a rede falhar e não houver cache, deixa o navegador decidir.
+  if (/\.(css|js)$/.test(url.pathname)) {
+    event.respondWith(
+      caches.match(event.request).then((hit) => {
+        const daRede = fetch(event.request)
+          .then((resp) => {
+            if (resp.ok) {
+              const clone = resp.clone();
+              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {});
+            }
+            return resp;
+          })
+          .catch(() => hit);
+        return hit || daRede;
+      })
     );
     return;
   }

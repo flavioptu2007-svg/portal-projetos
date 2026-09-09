@@ -3,73 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfHistória — acervo de História para sala de aula</title>
+<meta name="description" content="28 ferramentas de História prontas para usar: jogos, provas adaptadas, corretores de gabarito, diário de classe e gestão escolar. Abre no navegador, sem conta e sem instalação.">
+<meta name="author" content="Prof. Flávio Alexandre">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://jogos-5f131.web.app/">
+
+<!-- Cor da barra do navegador acompanha o tema escolhido/sistema -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1a16">
+
+<!-- Compartilhamento em WhatsApp, redes sociais e mensageiros -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ProfHistória">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://jogos-5f131.web.app/">
+<meta property="og:title" content="ProfHistória — 28 ferramentas de História para sala de aula">
+<meta property="og:description" content="Jogos, provas adaptadas, corretores de gabarito, diário de classe e gestão escolar. Abre no navegador, sem conta e sem instalação — 21 das 28 funcionam sem internet.">
+<meta property="og:image" content="https://jogos-5f131.web.app/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ProfHistória — acervo de História: 28 ferramentas, 21 funcionam sem internet.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ProfHistória — 28 ferramentas de História para sala de aula">
+<meta name="twitter:description" content="Jogos, provas adaptadas, corretores, diário de classe e gestão escolar. Sem conta e sem instalação.">
+<meta name="twitter:image" content="https://jogos-5f131.web.app/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "ProfHistória — acervo de História para sala de aula",
+  "description": "28 ferramentas de História para sala de aula: jogos, provas adaptadas, corretores de gabarito, diário de classe e gestão escolar.",
+  "url": "https://jogos-5f131.web.app/",
+  "inLanguage": "pt-BR",
+  "isAccessibleForFree": true,
+  "author": { "@type": "Person", "name": "Prof. Flávio Alexandre" },
+  "about": { "@type": "Thing", "name": "Ensino de História" },
+  "audience": { "@type": "EducationalAudience", "educationalRole": "teacher" }
+}
+</script>
+
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#312e81">
-<title>📱 Projetos Educacionais</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(160deg,#1e1b4b,#312e81 60%,#4f46e5);min-height:100vh;color:#fff;padding:24px 16px 60px}
-  h1{font-size:1.5rem;margin-bottom:4px}
-  p.sub{color:#a5b4fc;font-size:.85rem;margin-bottom:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-  a.card{display:block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:16px;color:#fff;text-decoration:none;transition:all .15s}
-  a.card:hover{background:rgba(255,255,255,.16);transform:translateY(-3px);border-color:#a5b4fc}
-  .emoji{font-size:2rem;display:block;margin-bottom:8px}
-  .nome{font-weight:800;font-size:.95rem}
-  .dica{margin-top:22px;background:rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;font-size:.8rem;color:#c7d2fe}
-  code{background:rgba(0,0,0,.3);padding:2px 8px;border-radius:6px;font-size:.85rem}
-</style>
+<link rel="stylesheet" href="./assets/site.css">
+<script>
+  /* Tema antes da primeira pintura: evita o piscar de folha branca
+     para quem já escolheu o quadro (ou usa o sistema no escuro). */
+  (function () {
+    try {
+      var salvo = localStorage.getItem("profhistoria_tema");
+      var querEscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (salvo === "quadro" || (!salvo && querEscuro)) {
+        document.documentElement.setAttribute("data-tema", "quadro");
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
-  <h1>📱 Projetos Educacionais</h1>
-  <p class="sub">Servidos pelo seu computador na rede local — abra no celular ou tablet.</p>
-  <div class="grid">
-    <a class="card" href="./atividades_adaptaveis.html"><span class="emoji">🧩</span><span class="nome">Atividades Adaptaveis</span></a>
-    <a class="card" href="./atividades_interativas.html"><span class="emoji">📄</span><span class="nome">Atividades Interativas</span></a>
-    <a class="card" href="./corretor_gabaritos_pro.html"><span class="emoji">✅</span><span class="nome">Corretor Gabaritos Pro</span></a>
-    <a class="card" href="./debate_argumentativo.html"><span class="emoji">🗣️</span><span class="nome">Debate Argumentativo</span></a>
-    <a class="card" href="./diariopro.html"><span class="emoji">🏫</span><span class="nome">Diariopro</span></a>
-    <a class="card" href="./escola_organizada.html"><span class="emoji">🏫</span><span class="nome">Escola Organizada</span></a>
-    <a class="card" href="./gestao_escolar.html"><span class="emoji">🏫</span><span class="nome">Gestao Escolar</span></a>
-    <a class="card" href="./guia_notebooklm_claude.html"><span class="emoji">📄</span><span class="nome">Guia Notebooklm Claude</span></a>
-    <a class="card" href="./historiagames.html"><span class="emoji">📜</span><span class="nome">Historiagames</span></a>
-    <a class="card" href="./jogo_bingo_reforma.html"><span class="emoji">🎱</span><span class="nome">Jogo Bingo Reforma</span></a>
-    <a class="card" href="./jogo_domino_reforma.html"><span class="emoji">🎮</span><span class="nome">Jogo Domino Reforma</span></a>
-    <a class="card" href="./jogo_memoria_brasil_colonia.html"><span class="emoji">🧠</span><span class="nome">Jogo Memoria Brasil Colonia</span></a>
-    <a class="card" href="./jogo_memoria_holandesas_digital.html"><span class="emoji">🧠</span><span class="nome">Jogo Memoria Holandesas Digital</span></a>
-    <a class="card" href="./jogo_memoria_holandesas.html"><span class="emoji">🧠</span><span class="nome">Jogo Memoria Holandesas</span></a>
-    <a class="card" href="./jogo_memoria_reforma.html"><span class="emoji">🧠</span><span class="nome">Jogo Memoria Reforma</span></a>
-    <a class="card" href="./jogo_perguntas_historia.html"><span class="emoji">🎮</span><span class="nome">Jogo Perguntas Historia</span></a>
-    <a class="card" href="./jogos_historicos.html"><span class="emoji">🎮</span><span class="nome">Jogos Historicos</span></a>
-    <a class="card" href="./labirinto_aldeia_indigena.html"><span class="emoji">🌀</span><span class="nome">Labirinto Aldeia Indigena</span></a>
-    <a class="card" href="./minha_historia_pessoal.html"><span class="emoji">📜</span><span class="nome">Minha Historia Pessoal</span></a>
-    <a class="card" href="./omredu_corretor_gabaritos.html"><span class="emoji">✅</span><span class="nome">Omredu Corretor Gabaritos</span></a>
-    <a class="card" href="./omredu_corretor_hibrido.html"><span class="emoji">✅</span><span class="nome">Omredu Corretor Hibrido</span></a>
-    <a class="card" href="./pipeline_multi_ia.html"><span class="emoji">📄</span><span class="nome">Pipeline Multi Ia</span></a>
-    <a class="card" href="./prova_adaptada_1_historia_9ano.html"><span class="emoji">📝</span><span class="nome">Prova Adaptada 1 Historia 9ano</span></a>
-    <a class="card" href="./prova_adaptada_2_historia_9ano.html"><span class="emoji">📝</span><span class="nome">Prova Adaptada 2 Historia 9ano</span></a>
-    <a class="card" href="./quiz_historico_en.html"><span class="emoji">❓</span><span class="nome">Quiz Historico En</span></a>
-    <a class="card" href="./quiz_historico.html"><span class="emoji">❓</span><span class="nome">Quiz Historico</span></a>
-    <a class="card" href="./quiz_roma_cidade_eterna.html"><span class="emoji">❓</span><span class="nome">Quiz Roma Cidade Eterna</span></a>
-    <a class="card" href="./test_adapt.html"><span class="emoji">🧩</span><span class="nome">Test Adapt</span></a>
-    <a class="card" href="./uno_egito_antigo.html"><span class="emoji">🃏</span><span class="nome">Uno Egito Antigo</span></a>
+
+<a class="salto" href="#acervo">Ir para o acervo</a>
+
+<!-- ── Barra ───────────────────────────────────────────────── -->
+<header class="barra">
+  <div class="limite barra__interno">
+    <a class="marca" href="./index.html">
+      <span class="marca__bloco">
+        <span class="marca__nome">ProfHistória</span>
+        <span class="marca__risco" aria-hidden="true"></span>
+      </span>
+      <span class="marca__sub">acervo de História</span>
+    </a>
+
+    <nav class="nav" aria-label="Seções">
+      <a href="#acervo">Acervo</a>
+      <a href="#sala">Em sala</a>
+      <a href="#codigo">Código</a>
+    </nav>
+
+    <button class="botao-tema" id="botao-tema" type="button" aria-label="Mudar para o tema quadro">
+      <span aria-hidden="true">◐</span> <span id="tema-rotulo">quadro</span>
+    </button>
   </div>
-  <div class="dica">💡 No celular: acesse <code>http://192.168.15.17:8765</code> — o computador e o celular devem estar na <b>mesma rede Wi-Fi</b>. Para encerrar: <code>./scripts/servir_projetos.sh --parar</code></div>
-  <script>
-    // Registra o service worker para o portal virar PWA instalável.
-    // SW só roda em contexto seguro (HTTPS ou localhost — isSecureContext já
-    // cobre ambos). No IP da LAN (HTTP) o manifest + ícones ainda melhoram o
-    // atalho de tela inicial, mas sem SW o prompt de instalação não aparece.
-    if ('serviceWorker' in navigator && window.isSecureContext) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW:', e.message));
-      });
-    }
-  </script>
+</header>
+
+<main>
+
+  <!-- ── Capa ──────────────────────────────────────────────── -->
+  <section class="capa">
+    <div class="limite">
+      <p class="capa__ano etiqueta">Acervo · 6º ano ao Ensino Médio · BNCC</p>
+
+      <h1>História que se joga,<br>se imprime e
+        <span class="risco">se corrige<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 60 3, 120 12, 180 6 S 250 4, 297 8" vector-effect="non-scaling-stroke"/></svg></span>.
+      </h1>
+
+      <p class="capa__texto">
+        Ferramentas de História feitas em sala de aula: jogos de tabuleiro e de tela,
+        provas adaptadas, corretores de cartão-resposta, diário de classe e gestão escolar.
+        Abre no navegador — sem conta, sem instalação e, na maioria dos casos, sem internet.
+      </p>
+
+      <div class="capa__numeros" id="numeros"></div>
+
+      <ul class="atalhos" id="atalhos" aria-label="Buscas rápidas"></ul>
+    </div>
+  </section>
+
+  <!-- ── Acervo ────────────────────────────────────────────── -->
+  <section class="acervo limite" id="acervo" aria-labelledby="titulo-acervo">
+    <h2 class="oculto-visual" id="titulo-acervo">Acervo de ferramentas</h2>
+
+    <div class="controles">
+      <div class="abas" id="abas" role="group" aria-label="Filtrar por categoria"></div>
+
+      <div class="ferramentas">
+        <label class="campo">
+          <span class="campo__lupa" aria-hidden="true">🔍</span>
+          <span class="oculto-visual">Buscar ferramenta</span>
+          <input id="campo-busca" type="search" autocomplete="off"
+                 placeholder="Buscar por tema, série ou nome — ex.: Reforma, 7º ano, memória">
+        </label>
+
+        <button class="chave" id="chave-offline" type="button" aria-pressed="false">
+          <span class="chave__pino" aria-hidden="true"></span>
+          funciona sem internet
+        </button>
+
+        <p class="contagem" id="contagem" role="status" aria-live="polite">28 ferramentas</p>
+      </div>
+    </div>
+
+    <div class="folha">
+      <ul class="grade" id="grade"></ul>
+
+      <div class="vazio" id="vazio" hidden>
+        <p>Nenhuma ferramenta encontrada para <strong id="vazio-busca">estes filtros</strong>.</p>
+        <p class="vazio__dica">Tente “Reforma”, “Egito”, “memória” ou desligue o filtro de internet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Em sala ───────────────────────────────────────────── -->
+  <section class="sala limite" id="sala" aria-labelledby="titulo-sala">
+    <div class="secao__titulo">
+      <h2 id="titulo-sala">Como usar em sala</h2>
+    </div>
+
+    <ul class="recados">
+      <li class="recado">
+        <h3>No projetor</h3>
+        <p>
+          Abra o jogo e use o modo Projetor. O sorteio roda na tela e a turma acompanha;
+          cada aluno marca a própria cartela no papel.
+        </p>
+      </li>
+      <li class="recado">
+        <h3>Impresso</h3>
+        <p>
+          Gere as cartelas, os cartões ou as folhas de atividade e imprima. Todo material
+          traz as instruções da rodada na própria página.
+        </p>
+      </li>
+      <li class="recado">
+        <h3>No celular ou tablet</h3>
+        <p>
+          Ligue o computador e o aparelho na mesma rede Wi-Fi e abra o portal pelo IP da
+          máquina — por exemplo <span class="codigo-inline">http://192.168.15.17:8765</span>.
+        </p>
+      </li>
+    </ul>
+
+    <p class="nota-instalar">
+      Para instalar como aplicativo: no menu do navegador, escolha
+      <strong>Adicionar à tela de início</strong>. Depois da primeira visita o portal abre
+      sozinho, mesmo sem internet.
+    </p>
+  </section>
+
+  <!-- ── Código ────────────────────────────────────────────── -->
+  <section class="codigo limite" id="codigo" aria-labelledby="titulo-codigo">
+    <div class="secao__titulo">
+      <h2 id="titulo-codigo">Código e infraestrutura</h2>
+    </div>
+
+    <ul class="repos">
+      <li>
+        <a class="repo" href="https://github.com/flavioptu2007-svg/portal-projetos" target="_blank" rel="noopener">
+          <h3>portal-projetos</h3>
+          <p>
+            O portal que você está vendo: páginas HTML independentes, sem framework, com
+            service worker para abrir offline na rede da escola.
+          </p>
+          <span class="repo__link">ver no GitHub ↗</span>
+        </a>
+      </li>
+      <li>
+        <a class="repo" href="https://github.com/flavioptu2007-svg/IA-Lab-Monolito" target="_blank" rel="noopener">
+          <h3>IA-Lab-Monolito</h3>
+          <p>
+            Monolito em FastAPI com IA, áudio, RAG e OpenVINO — a base do assistente e da
+            leitura em voz que aparece dentro dos jogos.
+          </p>
+          <span class="repo__link">ver no GitHub ↗</span>
+        </a>
+      </li>
+      <li>
+        <a class="repo" href="https://github.com/flavioptu2007-svg?tab=repositories" target="_blank" rel="noopener">
+          <h3>Outros repositórios</h3>
+          <p>Experimentos, estudos de ferramentas de IA e materiais de apoio do dia a dia.</p>
+          <span class="repo__link">ver no GitHub ↗</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<!-- ── Rodapé ──────────────────────────────────────────────── -->
+<footer class="rodape">
+  <div class="limite rodape__interno">
+    <p>
+      <strong>ProfHistória</strong> — acervo de História do Prof. Flávio Alexandre.
+      <span id="rodape-atualizado"></span>
+    </p>
+    <p>
+      <a href="https://github.com/flavioptu2007-svg/portal-projetos" target="_blank" rel="noopener">código no GitHub</a>
+      · feito para sala de aula
+    </p>
+  </div>
+</footer>
+
+<script src="projetos.js"></script>
+<script src="./assets/site.js"></script>
 <script src="ia_api.js"></script>
-<script>IAApi.injectWidget({ context: 'Portal de projetos educacionais de História. Ajude o professor a escolher atividades, jogos ou explicar conteúdo.' });</script>
+<script>
+  /* PWA: o service worker só registra em contexto seguro (HTTPS ou
+     localhost). No IP da rede local o portal continua abrindo normalmente,
+     apenas sem o prompt de instalação. */
+  if ("serviceWorker" in navigator && window.isSecureContext) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./sw.js").catch(function (e) {
+        console.warn("SW:", e.message);
+      });
+    });
+  }
+
+  /* Rodapé: mostra quando o acervo foi atualizado pela última vez. */
+  (function () {
+    var alvo = document.getElementById("rodape-atualizado");
+    if (alvo && window.ACERVO && window.ACERVO.atualizado) {
+      alvo.textContent = "Atualizado em " + window.ACERVO.atualizado + ".";
+    }
+  })();
+
+  /* Assistente de IA (widget flutuante) — só aparece se a API responder. */
+  if (window.IAApi && typeof IAApi.injectWidget === "function") {
+    IAApi.injectWidget({
+      context: "Portal de projetos educacionais de História. Ajude o professor a escolher atividades, jogos ou a explicar conteúdo."
+    });
+  }
+</script>
 </body>
 </html>

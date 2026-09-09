@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página não encontrada — ProfHistória</title>
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1a16">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/site.css">
+<script>
+  /* Mesmo arranque de tema do index: sem piscar de folha branca. */
+  (function () {
+    try {
+      var salvo = localStorage.getItem("profhistoria_tema");
+      var querEscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (salvo === "quadro" || (!salvo && querEscuro)) {
+        document.documentElement.setAttribute("data-tema", "quadro");
+      }
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<header class="barra">
+  <div class="limite barra__interno">
+    <a class="marca" href="/index.html">
+      <span class="marca__bloco">
+        <span class="marca__nome">ProfHistória</span>
+        <span class="marca__risco" aria-hidden="true"></span>
+      </span>
+      <span class="marca__sub">acervo de História</span>
+    </a>
+  </div>
+</header>
+
+<main class="limite" style="padding-top:clamp(48px,10vw,110px);padding-bottom:clamp(48px,10vw,90px)">
+  <p class="etiqueta">Erro 404</p>
+  <h1 style="margin-top:18px;font-size:clamp(2rem,6vw,3.4rem);max-width:22ch">
+    Esta página saiu da <span class="risco">lousa<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 60 3, 120 12, 180 6 S 250 4, 297 8" vector-effect="non-scaling-stroke"/></svg></span>.
+  </h1>
+  <p class="capa__texto">
+    O endereço não existe (ou mudou de nome). Nada de material perdido: o acervo inteiro
+    continua no início do portal — 28 ferramentas, a maioria funcionando sem internet.
+  </p>
+
+  <ul class="atalhos" style="margin-top:30px">
+    <li><a class="ficha" style="display:inline-flex;flex-direction:row;gap:10px;align-items:center;padding:12px 18px" href="/index.html">← voltar ao acervo</a></li>
+    <li><a class="ficha" style="display:inline-flex;flex-direction:row;gap:10px;align-items:center;padding:12px 18px" href="/historiagames.html">🎮 jogos</a></li>
+    <li><a class="ficha" style="display:inline-flex;flex-direction:row;gap:10px;align-items:center;padding:12px 18px" href="/quiz_historico.html">❓ quiz histórico</a></li>
+    <li><a class="ficha" style="display:inline-flex;flex-direction:row;gap:10px;align-items:center;padding:12px 18px" href="/diariopro.html">📘 diário de classe</a></li>
+  </ul>
+
+  <p class="nota-instalar">
+    Dica: abra o portal pela página inicial e use a busca — ou instale o ProfHistória como
+    aplicativo (<strong>Adicionar à tela de início</strong>) para ele abrir mesmo sem internet.
+  </p>
+</main>
+
+<footer class="rodape">
+  <div class="limite rodape__interno">
+    <p><strong>ProfHistória</strong> — acervo de História do Prof. Flávio Alexandre.</p>
+    <p><a href="https://github.com/flavioptu2007-svg/portal-projetos" target="_blank" rel="noopener">código no GitHub</a> · feito para sala de aula</p>
+  </div>
+</footer>
+
+</body>
+</html>

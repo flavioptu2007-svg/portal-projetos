@@ -12,7 +12,7 @@
 :root{
   --primary:#4f46e5;--primary-light:#818cf8;--primary-dark:#3730a3;
   --success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;
-  --bg:#f1f5f9;--card:#fff;--text:#1e293b;--text-light:#64748b;
+  --bg:#f1f5f9;--card:#fff;--text:#1e293b;--text-light:#5a697e;
   --border:#e2e8f0;--radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
   --shadow-lg:0 10px 25px rgba(0,0,0,.1);
   --font:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -256,16 +256,16 @@ textarea.code-input:focus{border-color:var(--primary-light)}
 </div>
 
 <!-- ─── Tabs ─────────────────────────────────────────────── -->
-<div class="tabs" role="tablist">
-  <button class="tab active" data-tab="grade" onclick="switchTab('grade')"><span class="icon">📅</span> Grade Semanal</button>
-  <button class="tab" data-tab="relatorios" onclick="switchTab('relatorios')"><span class="icon">📊</span> Relatórios</button>
-  <button class="tab" data-tab="ocupacao" onclick="switchTab('ocupacao')"><span class="icon">🏛️</span> Ocupação</button>
-  <button class="tab" data-tab="backup" onclick="switchTab('backup')"><span class="icon">💾</span> Backup</button>
-  <button class="tab" data-tab="admin" onclick="switchTab('admin')"><span class="icon">⚙️</span> Admin</button>
+<div class="tabs" role="group" aria-label="Seções do sistema">
+  <button class="tab active" data-tab="grade" onclick="switchTab('grade')" aria-pressed="true"><span class="icon" aria-hidden="true">📅</span> Grade Semanal</button>
+  <button class="tab" data-tab="relatorios" onclick="switchTab('relatorios')" aria-pressed="false"><span class="icon" aria-hidden="true">📊</span> Relatórios</button>
+  <button class="tab" data-tab="ocupacao" onclick="switchTab('ocupacao')" aria-pressed="false"><span class="icon" aria-hidden="true">🏛️</span> Ocupação</button>
+  <button class="tab" data-tab="backup" onclick="switchTab('backup')" aria-pressed="false"><span class="icon" aria-hidden="true">💾</span> Backup</button>
+  <button class="tab" data-tab="admin" onclick="switchTab('admin')" aria-pressed="false"><span class="icon" aria-hidden="true">⚙️</span> Admin</button>
 </div>
 
 <!-- ─── Container ────────────────────────────────────────── -->
-<div class="container">
+<div class="container" role="main">
 
 <!-- ═══ Panel: Grade Semanal ═══ -->
 <div class="panel active" id="panel-grade">
@@ -273,7 +273,7 @@ textarea.code-input:focus{border-color:var(--primary-light)}
     <div class="card-header">
       <h2>📅 Grade de Aulas — Semanal</h2>
       <div class="actions">
-        <select id="weekClassFilter" onchange="renderGrade()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+        <select id="weekClassFilter" onchange="renderGrade()" aria-label="Filtrar a grade por turma" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
           <option value="all">Todas as turmas</option>
         </select>
         <button class="btn btn-primary btn-sm" onclick="openModal('aula')">+ Nova aula</button>
@@ -422,6 +422,15 @@ function loadData(){
 function saveData(){
   localStorage.setItem(STORE_KEY, JSON.stringify(data));
 }
+// Escapa texto para inserção segura em HTML.
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// Escapa valor para dentro de onclick="fn('...')": primeiro torna o valor um
+// literal JS seguro (\ e ' escapados), depois escapa o HTML do atributo.
+function escJs(s){
+  return esc(String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,'\\n'));
+}
 function resetData(){
   data = JSON.parse(JSON.stringify(DEFAULT));
   saveData();renderAll();
@@ -465,7 +474,11 @@ function showToast(msg,type='success'){
 
 // ─── Tabs ────────────────────────────────────────────────
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.tab').forEach(t=>{
+    const ativo = t.dataset.tab===name;
+    t.classList.toggle('active',ativo);
+    t.setAttribute('aria-pressed',String(ativo));
+  });
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));
   if(name==='grade') renderGrade();
   if(name==='relatorios') renderReports();
@@ -481,15 +494,15 @@ function openModal(type,editData){
     const ed=editData||{};
     html=`
       <h3>${ed.id?'Editar':'Nova'} Aula</h3>
-      <div class="field"><label>Disciplina</label><input id="f_disc" value="${ed.disciplina||''}"></div>
+      <div class="field"><label for="f_disc">Disciplina</label><input id="f_disc" value="${esc(ed.disciplina||'')}"></div>
       <div class="field"><label>Professor</label>
         <select id="f_prof"><option value="">Selecione...</option>
-          ${getProf().map(p=>`<option value="${p}" ${ed.professor===p?'selected':''}>${p}</option>`).join('')}
+          ${getProf().map(p=>`<option value="${esc(p)}" ${ed.professor===p?'selected':''}>${esc(p)}</option>`).join('')}
         </select>
       </div>
       <div class="field"><label>Turma</label>
         <select id="f_turma"><option value="">Selecione...</option>
-          ${getTurmas().map(t=>`<option value="${t}" ${ed.turma===t?'selected':''}>${t}</option>`).join('')}
+          ${getTurmas().map(t=>`<option value="${esc(t)}" ${ed.turma===t?'selected':''}>${esc(t)}</option>`).join('')}
         </select>
       </div>
       <div class="field"><label>Sala</label><input id="f_sala" value="${ed.sala||''}"></div>
@@ -617,11 +630,11 @@ function renderGrade(){
       const aula=aulas.find(a=>a.dia===d&&a.horario===h);
       if(aula){
         const g=getGrade(aula.disciplina);
-        html+=`<div class="cell ${aula.cor||'subject-math'}" onclick="showToast('${aula.disciplina} • ${aula.professor} • ${aula.sala||'Sem sala'}')">
+        html+=`<div class="cell ${aula.cor||'subject-math'}" onclick="showToast('${escJs(aula.disciplina+' • '+aula.professor+' • '+(aula.sala||'Sem sala'))}')">
           <div class="grade grade-${g}">${g}</div>
-          <div class="subject">${aula.disciplina}</div>
-          <div class="teacher">${aula.professor}</div>
-          ${aula.sala?`<div class="room">${aula.sala}</div>`:''}
+          <div class="subject">${esc(aula.disciplina)}</div>
+          <div class="teacher">${esc(aula.professor)}</div>
+          ${aula.sala?`<div class="room">${esc(aula.sala)}</div>`:''}
         </div>`;
       }else{
         html+=`<div class="cell" style="opacity:.3;border-style:dashed;min-height:50px;cursor:default"></div>`;
@@ -803,14 +816,14 @@ function renderOcupacao(){
 function renderAdmin(){
   const pl=document.getElementById('profList');
   pl.innerHTML=getProf().map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border)">
-    <span>👨‍🏫 ${p}</span>
-    <button class="btn btn-sm btn-outline" onclick="delItem('professor','${p}')">✕</button>
+    <span>👨‍🏫 ${esc(p)}</span>
+    <button class="btn btn-sm btn-outline" aria-label="Excluir professor ${esc(p)}" onclick="delItem('professor','${escJs(p)}')">✕</button>
   </div>`).join('')||'<p class="empty-state">Nenhum professor</p>';
 
   const tl=document.getElementById('turmaList');
   tl.innerHTML=getTurmas().map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border)">
-    <span>🏫 ${t}</span>
-    <button class="btn btn-sm btn-outline" onclick="delItem('turma','${t}')">✕</button>
+    <span>🏫 ${esc(t)}</span>
+    <button class="btn btn-sm btn-outline" aria-label="Excluir turma ${esc(t)}" onclick="delItem('turma','${escJs(t)}')">✕</button>
   </div>`).join('')||'<p class="empty-state">Nenhuma turma</p>';
 
   document.getElementById('dataOverview').innerHTML=`
