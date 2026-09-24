@@ -137,12 +137,18 @@
       var hint = o.hint || 'Pergunte sobre o jogo ou o conteúdo da aula.';
       var accent = o.accent || '#4f46e5';
       var placeholder = o.placeholder || 'Digite sua pergunta…';
+      // Aviso fixo: as mensagens saem do aparelho e vão para um serviço de IA.
+      var PRIVACY = '🔒 Não escreva seu nome completo, endereço, telefone nem dados de colegas. ' +
+        'As mensagens são enviadas a um serviço de IA e ficam salvas neste aparelho por 24 h.';
 
       // Se já existe, não duplica
       if (document.querySelector('ia-lab-widget')) return;
 
       var host = document.createElement('ia-lab-widget');
-      host.setAttribute('style', 'all:initial');
+      // 'all:initial' isola o widget do CSS da página; o posicionamento precisa vir
+      // depois dele no mesmo style inline (senão anula o :host e o botão fica no fluxo).
+      host.setAttribute('style', 'all:initial;position:fixed;bottom:18px;right:18px;z-index:2147483000;' +
+        'font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif');
       document.body.appendChild(host);
 
       var shadow = host.attachShadow({ mode: 'open' });
@@ -188,6 +194,7 @@
         '.m.bot.speaking{outline:2px solid var(--accent);outline-offset:2px}' +
         '.sys{align-self:center;font-size:11px;color:#8a90a8;background:#eef0f7;padding:4px 12px;' +
         'border-radius:999px;text-align:center;max-width:95%}' +
+        '.sys.priv{background:#fef3c7;color:#92400e;border-radius:10px;line-height:1.4}' +
         '.typing{display:inline-flex;gap:4px;padding:12px 16px}' +
         '.typing i{width:7px;height:7px;border-radius:50%;background:var(--accent);' +
         'animation:iaBlink 1s infinite}' +
@@ -228,6 +235,7 @@
         '</div>' +
         '<div class="msgs" id="ia-msgs">' +
         '<div class="sys">' + escHTML(hint) + '</div>' +
+        '<div class="sys priv">' + escHTML(PRIVACY) + '</div>' +
         '</div>' +
         '<div class="input">' +
         '<textarea id="ia-in" rows="1" placeholder="' + escAttr(placeholder) + '"></textarea>' +
@@ -249,7 +257,7 @@
       // encodeURIComponent evita colisões (ex: /jogo-x.html vs /jogo_x.html).
       var HISTORY_KEY = 'ia-lab-hist:' + encodeURIComponent(location.pathname || '/');
       var MAX_HISTORY = 60; // últimas 60 mensagens (30 perguntas/respostas)
-      var HISTORY_TTL = 7 * 24 * 3600 * 1000; // expira após 7 dias
+      var HISTORY_TTL = 24 * 3600 * 1000; // expira após 24 h (computadores da escola são compartilhados)
 
       function loadHistory() {
         try {
@@ -449,6 +457,10 @@
         hintEl.className = 'sys';
         hintEl.textContent = hint;
         $msgs.appendChild(hintEl);
+        var privEl = document.createElement('div');
+        privEl.className = 'sys priv';
+        privEl.textContent = PRIVACY;
+        $msgs.appendChild(privEl);
         addMsg('bot', '🧹 Conversa nova! Pergunte o que quiser sobre este jogo.');
         $in.focus();
       });

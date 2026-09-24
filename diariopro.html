@@ -774,7 +774,7 @@ async function chamarOpenRouter(texto, intentoAtual){
     const to = setTimeout(()=>ctrl.abort(), 25000);
     const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+chave,'HTTP-Referer':'https://github.com/FoundationAgents/OpenManus','X-Title':'DiarioPro'},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+chave,'HTTP-Referer':location.origin,'X-Title':'DiarioPro'},
       body: JSON.stringify({model: cfg.model, temperature:0, messages:[{role:'system',content:SCHEMA_LLM},{role:'user',content:'Contexto: '+ctx+'\n\nMensagem do professor: '+prep.texto}]}),
       signal: ctrl.signal
     });
