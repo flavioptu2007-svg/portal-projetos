@@ -6,3 +6,4 @@ Thumbs.db
 # Runtime local (servidor e deploy)
 .servidor.pid
 .firebase/
+tools/node_modules/
