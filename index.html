@@ -25,7 +25,7 @@
 </head>
 <body>
   <h1>📱 Projetos Educacionais</h1>
-  <p class="sub">Servidos pelo seu computador na rede local — abra no celular ou tablet.</p>
+  <p class="sub">Jogos, atividades e ferramentas de História — funciona no computador, celular ou tablet.</p>
   <div class="grid">
     <a class="card" href="./atividades_adaptaveis.html"><span class="emoji">🧩</span><span class="nome">Atividades Adaptaveis</span></a>
     <a class="card" href="./atividades_interativas.html"><span class="emoji">📄</span><span class="nome">Atividades Interativas</span></a>
@@ -54,10 +54,16 @@
     <a class="card" href="./quiz_historico_en.html"><span class="emoji">❓</span><span class="nome">Quiz Historico En</span></a>
     <a class="card" href="./quiz_historico.html"><span class="emoji">❓</span><span class="nome">Quiz Historico</span></a>
     <a class="card" href="./quiz_roma_cidade_eterna.html"><span class="emoji">❓</span><span class="nome">Quiz Roma Cidade Eterna</span></a>
-    <a class="card" href="./test_adapt.html"><span class="emoji">🧩</span><span class="nome">Test Adapt</span></a>
     <a class="card" href="./uno_egito_antigo.html"><span class="emoji">🃏</span><span class="nome">Uno Egito Antigo</span></a>
   </div>
-  <div class="dica">💡 No celular: acesse <code>http://192.168.15.17:8765</code> — o computador e o celular devem estar na <b>mesma rede Wi-Fi</b>. Para encerrar: <code>./scripts/servir_projetos.sh --parar</code></div>
+  <div class="dica" id="dica-lan" hidden>💡 Servidor local da escola: no celular, abra este mesmo endereço (<code id="dica-end"></code>) — computador e celular precisam estar na <b>mesma rede Wi-Fi</b>.</div>
+  <script>
+    // Dica só faz sentido quando o portal está sendo servido na rede local (IP 192.168.x.x ou 10.x.x.x).
+    if (/^(192\.168|10)\./.test(location.hostname)) {
+      document.getElementById('dica-end').textContent = location.origin;
+      document.getElementById('dica-lan').hidden = false;
+    }
+  </script>
   <script>
     // Registra o service worker para o portal virar PWA instalável.
     // SW só roda em contexto seguro (HTTPS ou localhost — isSecureContext já
