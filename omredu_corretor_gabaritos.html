@@ -1065,6 +1065,8 @@
 </main>
 
 <script>
+function escHTML(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 /* ============================================================
    ESTADO GLOBAL
    ============================================================ */
@@ -1467,7 +1469,7 @@ function renderResultado(r) {
   const qBadge = document.getElementById('qualidadeBadge');
   const qMap = { boa: ['qual-boa','✓'], regular: ['qual-regular','⚠'], ruim: ['qual-ruim','✕'] };
   const [cls, icon] = qMap[r.qualidadeImagem] || ['qual-regular','?'];
-  qBadge.innerHTML = `<span class="qualidade-badge ${cls}">${icon} ${r.qualidadeImagem}</span>`;
+  qBadge.innerHTML = `<span class="qualidade-badge ${cls}">${icon} ${escHTML(r.qualidadeImagem)}</span>`;
 
   // Alert confiança
   const baixaConfianca = r.detalhes.filter(q => q.confianca < 0.7 && q.confianca > 0);
@@ -1496,14 +1498,14 @@ function renderResultado(r) {
     if (q.respostaAluno && q.respostaAluno !== q.respostaCorreta && q.status !== 'nula') {
       respostasHtml = `
         <div class="q-respostas">
-          <div class="q-alt ${altClass}">${q.respostaAluno || '—'}</div>
+          <div class="q-alt ${altClass}">${escHTML(q.respostaAluno || '—')}</div>
           <div style="color:var(--text3);font-size:.6rem">→</div>
-          <div class="q-alt q-alt-gabarito">${q.respostaCorreta || '?'}</div>
+          <div class="q-alt q-alt-gabarito">${escHTML(q.respostaCorreta || '?')}</div>
         </div>`;
     } else {
       respostasHtml = `
         <div class="q-respostas">
-          <div class="q-alt ${altClass}">${q.respostaAluno || '—'}</div>
+          <div class="q-alt ${altClass}">${escHTML(q.respostaAluno || '—')}</div>
         </div>`;
     }
 
@@ -1549,8 +1551,8 @@ function renderHistorico() {
       <div class="history-item" onclick="verHistorico(${i})">
         <div class="history-score" style="color:${pctColor}">${r.pct}%</div>
         <div class="history-info">
-          <div class="history-nome">${r.nomeAluno || 'Sem nome'}</div>
-          <div class="history-meta">${r.turmaAluno || '—'} · ${r.acertos}/${r.total} · ${hora}</div>
+          <div class="history-nome">${escHTML(r.nomeAluno || 'Sem nome')}</div>
+          <div class="history-meta">${escHTML(r.turmaAluno || '—')} · ${r.acertos}/${r.total} · ${hora}</div>
         </div>
       </div>`;
   }).join('');
@@ -1640,7 +1642,7 @@ function copiarResultado() {
     ``,
     `Questão | Aluno | Gabarito | Status`,
     ...r.detalhes.map(q =>
-      `Q${q.numero}     | ${q.respostaAluno || '—'}     | ${q.respostaCorreta || '?'}        | ${q.status}`)
+      `Q${q.numero}     | ${escHTML(q.respostaAluno || '—')}     | ${escHTML(q.respostaCorreta || '?')}        | ${q.status}`)
   ];
   navigator.clipboard.writeText(linhas.join('\n'))
     .then(() => alert('Resultado copiado!'));

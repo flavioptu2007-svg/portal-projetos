@@ -759,6 +759,8 @@
 </main>
 
 <script>
+function escHTML(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 /* ============================================================
    OMREdu Híbrido — JavaScript Engine
    Pipeline duplo: OpenCV.js (local) + Claude Vision (IA)
@@ -1617,21 +1619,21 @@ function renderResultado(r) {
     if (q.respostaAluno && q.respostaAluno !== q.respostaCorreta && q.status !== 'nula' && q.status !== 'conflito') {
       altHtml = `
         <div class="q-alts">
-          <div class="q-alt q-alt-errado">${q.respostaAluno || '—'}</div>
+          <div class="q-alt q-alt-errado">${escHTML(q.respostaAluno || '—')}</div>
           <span style="color:var(--text3);font-size:.5rem">→</span>
-          <div class="q-alt q-alt-gabarito">${q.respostaCorreta || '?'}</div>
+          <div class="q-alt q-alt-gabarito">${escHTML(q.respostaCorreta || '?')}</div>
         </div>`;
     } else if (q.status === 'conflito') {
       altHtml = `
         <div class="q-alts">
-          <div class="q-alt q-alt-conflito">${q.respostaAluno || '?'}</div>
+          <div class="q-alt q-alt-conflito">${escHTML(q.respostaAluno || '?')}</div>
           <span style="color:var(--text3);font-size:.5rem">/</span>
-          <div class="q-alt q-alt-gabarito">${q.respostaCorreta || '?'}</div>
+          <div class="q-alt q-alt-gabarito">${escHTML(q.respostaCorreta || '?')}</div>
         </div>`;
     } else {
       altHtml = `
         <div class="q-alts">
-          <div class="q-alt ${q.status === 'acerto' ? 'q-alt-certo' : 'q-alt-nulo'}">${q.respostaAluno || '—'}</div>
+          <div class="q-alt ${q.status === 'acerto' ? 'q-alt-certo' : 'q-alt-nulo'}">${escHTML(q.respostaAluno || '—')}</div>
         </div>`;
     }
 
@@ -1675,8 +1677,8 @@ function renderHistorico() {
     return `<div class="history-item" onclick="verHistorico(${i})">
       <div class="history-score" style="color:${pctC}">${r.pct}%</div>
       <div class="history-info">
-        <div class="history-nome">${r.nomeAluno || 'Sem nome'}</div>
-        <div class="history-meta">${r.turmaAluno || '—'} · ${r.acertos}/${r.total} · ${hora}</div>
+        <div class="history-nome">${escHTML(r.nomeAluno || 'Sem nome')}</div>
+        <div class="history-meta">${escHTML(r.turmaAluno || '—')} · ${r.acertos}/${r.total} · ${hora}</div>
       </div>
     </div>`;
   }).join('');
@@ -1727,7 +1729,7 @@ function copiarResultado() {
     '',
     'Questão | Aluno | Gabarito | Status | Conf.',
     ...r.questoes.map(q =>
-      `Q${q.numero}     | ${q.respostaAluno || '—'}     | ${q.respostaCorreta || '?'}        | ${q.status}   | ${q.confianca > 0 ? q.confianca+'%' : '—'}`)
+      `Q${q.numero}     | ${escHTML(q.respostaAluno || '—')}     | ${escHTML(q.respostaCorreta || '?')}        | ${q.status}   | ${q.confianca > 0 ? q.confianca+'%' : '—'}`)
   ];
   navigator.clipboard.writeText(linhas.join('\n'))
     .then(() => showAlertInPanel('✅ Resultado copiado!', 'success'));

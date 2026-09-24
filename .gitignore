@@ -3,3 +3,6 @@
 # OS
 .DS_Store
 Thumbs.db
+# Runtime local (servidor e deploy)
+.servidor.pid
+.firebase/
