@@ -411,6 +411,11 @@ const DEFAULT = {
 let data = loadData();
 let backupHistory = [];
 
+// ─── Escape (dados podem vir de backup importado) ─────────
+function esc(v){return String(v==null?'':v).replace(/[&<>"'`]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));}
+// Literal JS seguro para usar dentro de atributo onclick="..."
+function jsa(v){return esc(JSON.stringify(String(v==null?'':v)));}
+
 // ─── Persistence ─────────────────────────────────────────
 function loadData(){
   try{
@@ -481,18 +486,18 @@ function openModal(type,editData){
     const ed=editData||{};
     html=`
       <h3>${ed.id?'Editar':'Nova'} Aula</h3>
-      <div class="field"><label>Disciplina</label><input id="f_disc" value="${ed.disciplina||''}"></div>
+      <div class="field"><label>Disciplina</label><input id="f_disc" value="${esc(ed.disciplina||'')}"></div>
       <div class="field"><label>Professor</label>
         <select id="f_prof"><option value="">Selecione...</option>
-          ${getProf().map(p=>`<option value="${p}" ${ed.professor===p?'selected':''}>${p}</option>`).join('')}
+          ${getProf().map(p=>`<option value="${esc(p)}" ${ed.professor===p?'selected':''}>${esc(p)}</option>`).join('')}
         </select>
       </div>
       <div class="field"><label>Turma</label>
         <select id="f_turma"><option value="">Selecione...</option>
-          ${getTurmas().map(t=>`<option value="${t}" ${ed.turma===t?'selected':''}>${t}</option>`).join('')}
+          ${getTurmas().map(t=>`<option value="${esc(t)}" ${ed.turma===t?'selected':''}>${esc(t)}</option>`).join('')}
         </select>
       </div>
-      <div class="field"><label>Sala</label><input id="f_sala" value="${ed.sala||''}"></div>
+      <div class="field"><label>Sala</label><input id="f_sala" value="${esc(ed.sala||'')}"></div>
       <div class="field"><label>Dia</label>
         <select id="f_dia">${DIAS.map(d=>`<option value="${d}" ${ed.dia===d?'selected':''}>${DIAS_NOME[d]}</option>`).join('')}
         </select>
@@ -503,7 +508,7 @@ function openModal(type,editData){
       </div>
       <div class="actions">
         <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveAula('${ed.id||''}')">${ed.id?'Salvar':'Criar'}</button>
+        <button class="btn btn-primary" onclick="saveAula(${jsa(ed.id||'')})">${ed.id?'Salvar':'Criar'}</button>
       </div>`;
   }else if(type==='professor'){
     html=`
@@ -603,7 +608,7 @@ function renderGrade(){
   const grid=document.getElementById('weeklyGrid');
   const turmasSet=new Set(getAulas().map(a=>a.turma));
   const sel=document.getElementById('weekClassFilter');
-  sel.innerHTML='<option value="all">Todas as turmas</option>'+[...turmasSet].sort().map(t=>`<option value="${t}" ${filter===t?'selected':''}>${t}</option>`).join('');
+  sel.innerHTML='<option value="all">Todas as turmas</option>'+[...turmasSet].sort().map(t=>`<option value="${esc(t)}" ${filter===t?'selected':''}>${esc(t)}</option>`).join('');
 
   let html='<div class="header">Horário</div>'+DIAS.map(d=>`<div class="header">${DIAS_NOME[d]}</div>`).join('');
 
@@ -612,16 +617,16 @@ function renderGrade(){
   const displayTimes=timeSlots.length>0?timeSlots:HORARIOS.slice(0,5);
 
   displayTimes.forEach(h=>{
-    html+=`<div class="time-slot">${h}</div>`;
+    html+=`<div class="time-slot">${esc(h)}</div>`;
     DIAS.forEach(d=>{
       const aula=aulas.find(a=>a.dia===d&&a.horario===h);
       if(aula){
         const g=getGrade(aula.disciplina);
-        html+=`<div class="cell ${aula.cor||'subject-math'}" onclick="showToast('${aula.disciplina} • ${aula.professor} • ${aula.sala||'Sem sala'}')">
+        html+=`<div class="cell ${esc(aula.cor||'subject-math')}" onclick="showToast(${jsa(aula.disciplina+' • '+aula.professor+' • '+(aula.sala||'Sem sala'))})">
           <div class="grade grade-${g}">${g}</div>
-          <div class="subject">${aula.disciplina}</div>
-          <div class="teacher">${aula.professor}</div>
-          ${aula.sala?`<div class="room">${aula.sala}</div>`:''}
+          <div class="subject">${esc(aula.disciplina)}</div>
+          <div class="teacher">${esc(aula.professor)}</div>
+          ${aula.sala?`<div class="room">${esc(aula.sala)}</div>`:''}
         </div>`;
       }else{
         html+=`<div class="cell" style="opacity:.3;border-style:dashed;min-height:50px;cursor:default"></div>`;
@@ -654,11 +659,11 @@ function renderReports(){
   const fp=document.getElementById('reportFilter');
   if(type==='turma'){
     const turmas=getTurmas();
-    fp.innerHTML=turmas.map(t=>`<option value="${t}">${t}</option>`).join('');
+    fp.innerHTML=turmas.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
     if(!fp.value&&turmas.length>0) fp.value=turmas[0];
   }else{
     const profs=getProf();
-    fp.innerHTML=profs.map(p=>`<option value="${p}">${p}</option>`).join('');
+    fp.innerHTML=profs.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
     if(!fp.value&&profs.length>0) fp.value=profs[0];
   }
 
@@ -679,12 +684,12 @@ function renderReports(){
       const g=getGrade(a.disciplina);
       const tagCls=g==='A'?'tag-ok':g==='B'?'tag-ok':g==='C'?'tag-warn':'tag-err';
       return `<tr>
-        <td><strong>${a.disciplina}</strong></td>
-        <td>${a.professor}</td>
-        <td>${a.turma}</td>
-        <td>${DIAS_NOME[a.dia]||a.dia}</td>
-        <td>${a.horario}</td>
-        <td>${a.sala||'-'}</td>
+        <td><strong>${esc(a.disciplina)}</strong></td>
+        <td>${esc(a.professor)}</td>
+        <td>${esc(a.turma)}</td>
+        <td>${esc(DIAS_NOME[a.dia]||a.dia)}</td>
+        <td>${esc(a.horario)}</td>
+        <td>${esc(a.sala||'-')}</td>
         <td><span class="tag ${tagCls}">${g}</span></td>
       </tr>`;
     }).join('');
@@ -704,7 +709,7 @@ function renderReports(){
       <h3 style="margin-bottom:.75rem;font-size:.9rem">📊 Distribuição por Disciplina</h3>
       ${entries.map(([d,c],i)=>`
         <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
-          <span style="min-width:100px;font-size:.8rem">${d}</span>
+          <span style="min-width:100px;font-size:.8rem">${esc(d)}</span>
           <div style="flex:1;height:20px;background:#e2e8f0;border-radius:6px;overflow:hidden">
             <div style="height:100%;width:${(c/maxCount)*100}%;background:${colors[i%colors.length]};border-radius:6px;transition:width .6s ease"></div>
           </div>
@@ -757,14 +762,14 @@ function renderOcupacao(){
       const pct=Math.min((ocupadas/totalSlots)*100,100);
       const cls=pct<40?'':pct<70?'medium':'high';
       return `<div class="room-card">
-        <div class="name">${e.nome}</div>
-        <div class="info">${e.tipo} • Capacidade: ${e.capacidade}</div>
+        <div class="name">${esc(e.nome)}</div>
+        <div class="info">${esc(e.tipo)} • Capacidade: ${esc(e.capacidade)}</div>
         <div class="occ-bar">
           <div class="fill ${cls}" style="width:${pct}%"></div>
           <div class="label">${ocupadas}/${totalSlots} slots • ${Math.round(pct)}%</div>
         </div>
         ${ocupadas>0?`<div style="font-size:.72rem;color:var(--text-light);margin-top:.3rem">
-          ${aulasDia.filter(a=>a.sala===e.nome).map(a=>`${a.horario} ${a.disciplina} (${a.turma})`).join(' • ')}
+          ${aulasDia.filter(a=>a.sala===e.nome).map(a=>esc(`${a.horario} ${a.disciplina} (${a.turma})`)).join(' • ')}
         </div>`:''}
       </div>`;
     }).join('');
@@ -803,14 +808,14 @@ function renderOcupacao(){
 function renderAdmin(){
   const pl=document.getElementById('profList');
   pl.innerHTML=getProf().map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border)">
-    <span>👨‍🏫 ${p}</span>
-    <button class="btn btn-sm btn-outline" onclick="delItem('professor','${p}')">✕</button>
+    <span>👨‍🏫 ${esc(p)}</span>
+    <button class="btn btn-sm btn-outline" onclick="delItem('professor',${jsa(p)})">✕</button>
   </div>`).join('')||'<p class="empty-state">Nenhum professor</p>';
 
   const tl=document.getElementById('turmaList');
   tl.innerHTML=getTurmas().map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border)">
-    <span>🏫 ${t}</span>
-    <button class="btn btn-sm btn-outline" onclick="delItem('turma','${t}')">✕</button>
+    <span>🏫 ${esc(t)}</span>
+    <button class="btn btn-sm btn-outline" onclick="delItem('turma',${jsa(t)})">✕</button>
   </div>`).join('')||'<p class="empty-state">Nenhuma turma</p>';
 
   document.getElementById('dataOverview').innerHTML=`

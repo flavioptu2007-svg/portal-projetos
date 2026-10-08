@@ -1,22 +1,24 @@
 /* ============================================================
    OMREdu — Service Worker
    Suporte offline para o Corretor Híbrido de Gabaritos
+
+   - Só intercepta GET (chamadas à API de IA são POST e passam direto).
+   - Nada de respostas de erro é gravado no cache.
    ============================================================ */
 
-const CACHE_NAME = 'omredu-v1';
+const CACHE_NAME = 'omredu-v2';
 const ASSETS_TO_CACHE = [
   '/omredu_corretor_hibrido.html',
-  '/sw_omredu.js',
+  '/omredu_claude.js',
 ];
 
-// Recursos CDN que serão cacheados sob demanda
+// Recursos CDN (OpenCV.js, Google Fonts) cacheados sob demanda
 const CDN_CACHE = 'omredu-cdn-v1';
+const CDN_HOSTS = ['docs.opencv.org', 'fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
@@ -35,9 +37,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // Cache-first para o app
+  // Navegação: network-first, fallback para o app em cache
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() =>
@@ -47,83 +50,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache CDN assets (OpenCV.js, Google Fonts) sob demanda
-  if (
-    url.hostname.includes('opencv') ||
-    url.hostname.includes('googleapis') ||
-    url.hostname.includes('gstatic') ||
-    url.hostname.includes('anthropic') // API calls não devem ser cacheadas
-  ) {
+  // CDN: cache-first com atualização em segundo plano
+  if (CDN_HOSTS.includes(url.hostname)) {
     event.respondWith(
-      caches.open(CDN_CACHE).then((cache) => {
-        return cache.match(event.request).then((cached) => {
+      caches.open(CDN_CACHE).then((cache) =>
+        cache.match(event.request).then((cached) => {
           const fetchPromise = fetch(event.request).then((response) => {
-            // Cache apenas recursos estáticos CDN, não API calls
-            if (!url.pathname.includes('messages')) {
+            if (response.ok || response.type === 'opaque') {
               cache.put(event.request, response.clone());
             }
             return response;
           }).catch(() => cached);
           return cached || fetchPromise;
-        });
-      })
+        })
+      )
     );
     return;
   }
 
-  // Network-first para todo o resto (com fallback para cache)
+  // Mesmo origin: network-first com fallback para cache
+  if (url.origin !== self.location.origin) return;
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache recursos estáticos
-        if (response.status === 200 && url.protocol === 'https:') {
-          const contentType = response.headers.get('Content-Type') || '';
-          if (
-            contentType.includes('javascript') ||
-            contentType.includes('css') ||
-            contentType.includes('font') ||
-            contentType.includes('image')
-          ) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
+        const contentType = response.headers.get('Content-Type') || '';
+        if (response.ok && /javascript|css|font|image/.test(contentType)) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return response;
       })
       .catch(() => caches.match(event.request))
   );
 });
-
-/* ============================================================
-   Background Sync — fila de correções pendentes
-   ============================================================ */
-
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-grades') {
-    event.waitUntil(syncPendingGrades());
-  }
-});
-
-async function syncPendingGrades() {
-  const cache = await caches.open('pending-grades');
-  const keys = await cache.keys();
-  for (const request of keys) {
-    try {
-      const cached = await cache.match(request);
-      if (cached) {
-        const data = await cached.json();
-        // Tenta enviar para API quando online
-        await fetch('/api/v1/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        await cache.delete(request);
-      }
-    } catch (e) {
-      console.warn('[SW] Sync pending grade failed:', e);
-    }
-  }
-}
