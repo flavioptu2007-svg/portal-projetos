@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validar site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Referências locais e JSONs
+        run: python3 tools/check_site.py
+
+  build-drift:
+    name: HTMLs em sincronia com o JSX
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: tools/package-lock.json
+
+      - name: Install tools
+        working-directory: tools
+        run: npm ci
+
+      # Editar o .jsx sem rodar tools/build.js deixa a página publicada
+      # desatualizada: o build precisa reproduzir exatamente o que está no repo.
+      - name: Rebuild pages
+        run: npm --prefix tools run build
+
+      - name: Falhar se o build alterou arquivos versionados
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::HTMLs dessincronizados do JSX — rode 'npm --prefix tools run build' e commite o resultado"
+            exit 1
+          fi
