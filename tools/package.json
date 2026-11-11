@@ -6,7 +6,7 @@
     "build": "node build.js"
   },
   "devDependencies": {
-    "@babel/core": "7.29.7",
+    "@babel/core": "8.1.0",
     "@babel/preset-react": "7.28.5",
     "tailwindcss": "3.4.19"
   },
