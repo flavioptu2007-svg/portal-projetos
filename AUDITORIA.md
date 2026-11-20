@@ -151,3 +151,15 @@ Regra usada: só entra código cujo texto oficial trata do conteúdo. Quando nen
 - **Duplicação** `quiz_historico` × `quiz_historico_en`: continuam dois arquivos completos. Unificar exige refatorar o componente; fica como melhoria.
 
 Validação final: as 29 páginas carregadas no Chromium sem erro de JavaScript.
+
+---
+
+## 4. Revisão de acompanhamento (2026-11-20)
+
+Baseline (Chromium headless via Playwright, servidor local, 29 páginas): nenhum erro JS próprio. Erros de rede observados vieram do ambiente sem acesso à internet (CDN do React, Font Awesome e `ia-lab-api.onrender.com/api/health`). As 5 páginas React foram reavaliadas com React 18.3.1 servido localmente (rota interceptada): renderizam e os primeiros botões respondem sem erro de página.
+
+- Segredos: busca por padrões de chave/token em todo o repositório: nenhum achado.
+- CDNs: todos já têm versão fixa (react/react-dom 18.3.1, Font Awesome 6.5.1); Google Fonts sem versão (serviço de CSS, não aplicável).
+- Links locais: `tools/check_site.py` sem referências quebradas.
+- Acessibilidade corrigida: `lang="en"` em `quiz_historico_en.html` (estava `pt-BR`); `aria-label`/`for` em campos sem rótulo (gabaritos OMREdu, gestão escolar, bingo, minha história, corretor pro).
+- Pendente: confirmar se o identificador de modelo `claude-opus-5` em `omredu_claude.js` está disponível na conta que usará a rota; migrar corretores OMREdu para a `ia-lab-api` (item 2.2).
