@@ -251,7 +251,7 @@ textarea.code-input:focus{border-color:var(--primary-light)}
   <div class="actions">
     <button class="btn-white" onclick="exportBackup()">⬇ Exportar</button>
     <button class="btn-white-outline" onclick="document.getElementById('importFile').click()">⬆ Importar</button>
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
+    <input type="file" id="importFile" aria-label="Importar backup JSON" accept=".json" style="display:none" onchange="importBackup(event)">
   </div>
 </div>
 
@@ -273,7 +273,7 @@ textarea.code-input:focus{border-color:var(--primary-light)}
     <div class="card-header">
       <h2>📅 Grade de Aulas — Semanal</h2>
       <div class="actions">
-        <select id="weekClassFilter" onchange="renderGrade()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+        <select id="weekClassFilter" aria-label="Filtrar turma" onchange="renderGrade()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
           <option value="all">Todas as turmas</option>
         </select>
         <button class="btn btn-primary btn-sm" onclick="openModal('aula')">+ Nova aula</button>
@@ -296,12 +296,12 @@ textarea.code-input:focus{border-color:var(--primary-light)}
       </div>
     </div>
     <div class="filter-bar">
-      <select id="reportType" onchange="renderReports()">
+      <select id="reportType" aria-label="Tipo de relatório" onchange="renderReports()">
         <option value="turma">Por Turma</option>
         <option value="professor">Por Professor</option>
       </select>
-      <select id="reportFilter" onchange="renderReports()"></select>
-      <input type="month" id="reportMonth" onchange="renderReports()">
+      <select id="reportFilter" aria-label="Filtro do relatório" onchange="renderReports()"></select>
+      <input type="month" id="reportMonth" aria-label="Mês do relatório" onchange="renderReports()">
     </div>
     <div class="table-wrap">
       <table><thead id="reportHead"></thead><tbody id="reportBody"></tbody></table>
@@ -316,7 +316,7 @@ textarea.code-input:focus{border-color:var(--primary-light)}
     <div class="card-header">
       <h2>🏛️ Painel de Ocupação por Espaço</h2>
       <div class="actions">
-        <select id="occDay" onchange="renderOcupacao()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem"></select>
+        <select id="occDay" aria-label="Dia da semana" onchange="renderOcupacao()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem"></select>
         <button class="btn btn-primary btn-sm" onclick="openModal('espaco')">+ Novo espaço</button>
       </div>
     </div>
@@ -335,7 +335,7 @@ textarea.code-input:focus{border-color:var(--primary-light)}
     <div class="backup-area" id="dropArea" onclick="document.getElementById('importFile2').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
       <div class="icon">📦</div>
       <p><strong>Arraste um arquivo JSON aqui</strong><br>ou clique para selecionar</p>
-      <input type="file" id="importFile2" accept=".json" style="display:none" onchange="importBackup(event)">
+      <input type="file" id="importFile2" aria-label="Importar backup JSON" accept=".json" style="display:none" onchange="importBackup(event)">
     </div>
     <div class="backup-actions">
       <button class="btn btn-primary" onclick="exportBackup()">📥 Exportar dados (JSON)</button>
