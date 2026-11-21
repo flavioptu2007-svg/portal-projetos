@@ -173,7 +173,7 @@ header .logo{font-weight:800;font-size:1.15rem}
     <h2>❓ Sorteio</h2>
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
       <label style="font-size:.75rem;font-weight:700;color:var(--texto2)">⏱️ Timer:</label>
-      <select id="timer-config" style="padding:6px 8px;border:1px solid var(--borda);border-radius:8px;font-size:.8rem">
+      <select id="timer-config" aria-label="Tempo por pergunta" style="padding:6px 8px;border:1px solid var(--borda);border-radius:8px;font-size:.8rem">
         <option value="0">Desligado</option>
         <option value="10">10s</option>
         <option value="15" selected>15s</option>
@@ -216,7 +216,7 @@ header .logo{font-weight:800;font-size:1.15rem}
     <h2>🖨️ Gerar Cartelas para a Turma</h2>
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0">
       <label style="font-size:.85rem;font-weight:700">Quantidade de cartelas:</label>
-      <input type="number" id="num-cartelas" value="10" min="1" max="40" style="width:80px;padding:8px;border:1px solid var(--borda);border-radius:9px">
+      <input type="number" id="num-cartelas" aria-label="Número de cartelas" value="10" min="1" max="40" style="width:80px;padding:8px;border:1px solid var(--borda);border-radius:9px">
       <button class="btn btn-pri" id="btn-gerar-cartelas" style="width:auto">🃏 Gerar Cartelas</button>
       <button class="btn btn-ok" id="btn-imprimir" style="width:auto">🖨️ Imprimir</button>
     </div>
@@ -235,12 +235,12 @@ header .logo{font-weight:800;font-size:1.15rem}
       <button class="btn btn-ghost" id="btn-restaurar">↩️ Restaurar banco padrão</button>
     </div>
     <form id="form-pergunta" style="display:none">
-      <div class="full"><label>Termo (o que sai na cartela)</label><input id="f-termo" required maxlength="40"></div>
-      <div class="full"><label>Pergunta</label><input id="f-pergunta" required></div>
-      <div class="alt-inputs"><label>Alternativa 1</label><input id="f-alt1" required></div>
-      <div class="alt-inputs"><label>Alternativa 2</label><input id="f-alt2" required></div>
-      <div class="alt-inputs"><label>Alternativa 3</label><input id="f-alt3" required></div>
-      <div class="alt-inputs"><label>Correta</label><select id="f-correta"><option value="0">Alternativa 1</option><option value="1">Alternativa 2</option><option value="2">Alternativa 3</option></select></div>
+      <div class="full"><label for="f-termo">Termo (o que sai na cartela)</label><input id="f-termo" required maxlength="40"></div>
+      <div class="full"><label for="f-pergunta">Pergunta</label><input id="f-pergunta" required></div>
+      <div class="alt-inputs"><label for="f-alt1">Alternativa 1</label><input id="f-alt1" required></div>
+      <div class="alt-inputs"><label for="f-alt2">Alternativa 2</label><input id="f-alt2" required></div>
+      <div class="alt-inputs"><label for="f-alt3">Alternativa 3</label><input id="f-alt3" required></div>
+      <div class="alt-inputs"><label for="f-correta">Correta</label><select id="f-correta"><option value="0">Alternativa 1</option><option value="1">Alternativa 2</option><option value="2">Alternativa 3</option></select></div>
       <div class="full"><label>Curiosidade (aparece após responder)</label><input id="f-curio" placeholder="Opcional — fato histórico interessante"></div>
       <div class="full" style="display:flex;gap:8px">
         <button class="btn btn-ok" type="submit">💾 Salvar</button>

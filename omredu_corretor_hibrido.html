@@ -543,7 +543,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>Nº Questões</label>
-            <select id="numQuestoes" onchange="renderGabarito()">
+            <select id="numQuestoes" aria-label="Número de questões" onchange="renderGabarito()">
               <option value="5">5</option>
               <option value="10" selected>10</option>
               <option value="15">15</option>
@@ -554,7 +554,7 @@
           </div>
           <div class="form-group">
             <label>Alternativas</label>
-            <select id="numAlternativas" onchange="renderGabarito()">
+            <select id="numAlternativas" aria-label="Número de alternativas" onchange="renderGabarito()">
               <option value="3">3 (A–C)</option>
               <option value="4">4 (A–D)</option>
               <option value="5" selected>5 (A–E)</option>
@@ -603,7 +603,7 @@
         <div class="tab-content active" id="tab-upload">
           <div class="upload-area" id="uploadArea"
                ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-            <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)" capture>
+            <input type="file" id="fileInput" aria-label="Foto do gabarito do aluno" accept="image/*" onchange="handleFileSelect(event)" capture>
             <div class="upload-icon">🗂️</div>
             <div class="upload-text">Arraste ou clique para selecionar</div>
             <div class="upload-hint">JPG, PNG, WEBP · Máx 10MB</div>
@@ -893,7 +893,7 @@ function renderGabarito() {
     cell.className = 'gabarito-cell';
     let opts = '<option value="">—</option>';
     alts.forEach(a => { opts += `<option>${a}</option>`; });
-    cell.innerHTML = `<span class="q-num">Q${i}</span><select id="gab_${i}">${opts}</select>`;
+    cell.innerHTML = `<span class="q-num">Q${i}</span><select id="gab_${i}" aria-label="Resposta correta da questão ${i}">${opts}</select>`;
     grid.appendChild(cell);
   }
 }
