@@ -23,7 +23,7 @@ Legenda de severidade: **ALTA** (quebra função ou expõe dados) · **MÉDIA** 
 | 10 | Desempenho | 5 páginas usam React **development** + Babel no navegador + Tailwind CDN | BAIXA | **Corrigido** |
 | 11 | PWA | `sw_omredu.js` faz sync para `/api/v1/upload`, rota inexistente; cacheia CDN sem checar `response.ok` | BAIXA | **Corrigido** |
 | 12 | Índice | `index.html` fixa IP `192.168.15.17` e cita script inexistente | BAIXA | **Corrigido** |
-| 13 | Modelo | OMREdu usava `claude-sonnet-4-20250514` (modelo antigo) | BAIXA | **Corrigido** (`claude-opus-5`) |
+| 13 | Modelo | OMREdu usava `claude-sonnet-4-20250514` (modelo antigo) | BAIXA | **Corrigido** (`claude-opus-5-5`) |
 | 14 | Widget | Botão do assistente de IA aparecia no fluxo da página (o `all:initial` anulava o posicionamento) | BAIXA | **Corrigido** |
 
 Sem achados: nenhum segredo/chave de API versionado; nenhum link local quebrado; todas as páginas têm `lang` e `viewport`; `ia_api.js` usa `textContent` e Shadow DOM corretamente.
@@ -135,7 +135,7 @@ Regra usada: só entra código cujo texto oficial trata do conteúdo. Quando nen
 **Para você decidir:** Abolicionismo e Revoltas da Primeira República ficaram sem código. Candidatos parciais: EF08HI19/EF08HI20 (legado da escravidão) e EF09HI01/EF09HI03. **Correspondência parcial mantida:** "Crise do Feudalismo" com EF07HI01 e "Sociedade da República Velha" com EF09HI02. **DiárioPro:** quem já usa o app tem os dados antigos no navegador; os códigos novos aparecem após "Restaurar demonstração" ou em cadastros novos.
 
 ### 3.2 IA, privacidade e segurança
-- **OMREdu (itens 2 e 13):** novo `omredu_claude.js`, usado pelos dois corretores. Pede a chave da API ao professor num diálogo (com aviso de privacidade) e guarda **só em `sessionStorage`**. Uma chave inválida (401) é descartada. Modelo `claude-opus-5`, com fallback do servidor ativado (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`) e tratamento de recusa (`stop_reason: "refusal"`). Testado com API simulada: cabeçalhos, corpo, leitura da resposta e armazenamento conferidos.
+- **OMREdu (itens 2 e 13):** novo `omredu_claude.js`, usado pelos dois corretores. Pede a chave da API ao professor num diálogo (com aviso de privacidade) e guarda **só em `sessionStorage`**. Uma chave inválida (401) é descartada. Modelo `claude-opus-5-5`, com fallback do servidor ativado (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`) e tratamento de recusa (`stop_reason: "refusal"`). Testado com API simulada: cabeçalhos, corpo, leitura da resposta e armazenamento conferidos.
 - **Widget (itens 3 e 14):** aviso fixo "não escreva nome completo, endereço, telefone nem dados de colegas", reexibido ao limpar a conversa. Histórico reduzido de 7 dias para 24 h. Corrigidos posição e fonte do botão.
 - **XSS (itens 5 e 6):** `escHTML()` no OMREdu. No `gestao_escolar.html`, `esc()` e `jsa()`, este para valores dentro de `onclick`. Teste com backup malicioso: a versão antiga executou script (7 injeções); a nova, nenhuma.
 - **DiárioPro (item 7):** `HTTP-Referer` passa a ser a origem do próprio portal.
@@ -162,4 +162,4 @@ Baseline (Chromium headless via Playwright, servidor local, 29 páginas): nenhum
 - CDNs: todos já têm versão fixa (react/react-dom 18.3.1, Font Awesome 6.5.1); Google Fonts sem versão (serviço de CSS, não aplicável).
 - Links locais: `tools/check_site.py` sem referências quebradas.
 - Acessibilidade corrigida: `lang="en"` em `quiz_historico_en.html` (estava `pt-BR`); `aria-label`/`for` em campos sem rótulo (gabaritos OMREdu, gestão escolar, bingo, minha história, corretor pro).
-- Pendente: confirmar se o identificador de modelo `claude-opus-5` em `omredu_claude.js` está disponível na conta que usará a rota; migrar corretores OMREdu para a `ia-lab-api` (item 2.2).
+- Pendente: confirmar se o identificador de modelo `claude-opus-5-5` em `omredu_claude.js` está disponível na conta que usará a rota; migrar corretores OMREdu para a `ia-lab-api` (item 2.2).

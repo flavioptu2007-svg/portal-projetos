@@ -17,7 +17,7 @@
   'use strict';
 
   var KEY = 'omredu-anthropic-key';
-  var MODEL = 'claude-opus-5';
+  var MODEL = 'claude-opus-5-5';
   var TIMEOUT = 120000;
 
   function getKey() {
